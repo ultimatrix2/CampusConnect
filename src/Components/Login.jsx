@@ -24,7 +24,7 @@ function Login() {
           isSignInActive ? "hidden" : ""
         }`}
       >
-        <form>
+        <form >
           <h1>Create Account</h1>
 
           <input type="text" placeholder="NAME" required/>
