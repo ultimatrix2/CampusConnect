@@ -1,0 +1,1 @@
+This project is a college networking website designed to bridge the gap between freshers and seniors, fostering mentorship and collaboration within the college community.
