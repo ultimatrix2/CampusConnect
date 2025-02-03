@@ -66,7 +66,7 @@ function Login() {
   
       if (response.ok) {
         alert("Registration Successful! Redirecting...");
-        navigate("/register_success");
+        navigate("/home");
       } else {
         alert(`Error: ${data.message || "Registration failed"}`);
       }
@@ -93,7 +93,7 @@ function Login() {
       if (response.ok) {
         alert("Login Successful! Redirecting...");
         localStorage.setItem("token", data.token); 
-        navigate("/login_success"); 
+        navigate("/home"); 
       } else {
         alert(`Error: ${data.message || "Login failed"}`);
       }
