@@ -13,10 +13,10 @@ exports.register = async (req, res) => {
     try {
         const { name, gemail, email, password, confirmPassword, branch } = req.body;
 
-        if(!gemail.endsWith("@mnnit.ac.in"))
-        {
-            return res.status(400).json({ message: "Gemail must be a valid MNNIT email (e.g., example@mnnit.ac.in" });
-        }
+        // if(!gemail.endsWith("@mnnit.ac.in"))
+        // {
+        //     return res.status(400).json({ message: "Gemail must be a valid MNNIT email (e.g., example@mnnit.ac.in" });
+        // }
         
         if (password !== confirmPassword) {
             return res.status(400).json({ message: "Passwords do not match." });
@@ -46,10 +46,6 @@ exports.login = async (req, res) => {
         console.log(user.email);
         
        // if(user.email)
-       if (!user.email.endsWith("@mnnit.ac.in")) {
-        return res.status(400).json({ message: "hfjdgfygdyf." });
-    }
-
         if (!user) {
             return res.status(400).json({ message: "Register First." });
         }

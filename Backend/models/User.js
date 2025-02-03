@@ -13,8 +13,9 @@ const userSchema = new mongoose.Schema({
         unique: true,
         validate: {
             validator: function (email) {
-                return gemail.endsWith("@mnnit.ac.in");
+                return email.endsWith("@mnnit.ac.in");
             },
+            
             message: "Gemail must be a valid MNNIT email (e.g., example@mnnit.ac.in)."
         }
     },
