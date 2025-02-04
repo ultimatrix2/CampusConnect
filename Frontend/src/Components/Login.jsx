@@ -1,9 +1,13 @@
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { IoIosSchool } from "react-icons/io";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../redux/userSlice"; 
 import './Login.css'
+
 function Login() {
   const navigate = useNavigate();
   const [isSignInActive, setIsSignInActive] = useState(true);
@@ -37,23 +41,22 @@ function Login() {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-  
+
     if (registerData.password !== registerData.confirmPassword) {
-      alert("Passwords do not match!");
+      toast.error("Passwords do not match!");
       return;
     }
-  
+
     if (!registerData.gemail || !registerData.email) {
-      alert("Please provide both GSUITE and Personal emails.");
+      toast.error("Please provide both GSUITE and Personal emails.");
       return;
     }
-  
-    
+
     if (!/\S+@\S+\.\S+/.test(registerData.email)) {
-      alert("Please enter a valid email address.");
+      toast.error("Please enter a valid email address.");
       return;
     }
-  
+
     try {
       const response = await fetch("http://localhost:5001/api/auth/register", {
         method: "POST",
@@ -62,19 +65,19 @@ function Login() {
         },
         body: JSON.stringify(registerData),
       });
-  
+
       const data = await response.json();
-      console.log('Response Data:', data); 
-  
+      console.log("Response Data:", data);
+
       if (response.ok) {
-        alert("Registration Successful! Redirecting...");
-        navigate("/home");
+        toast.success("Registration Successful! Redirecting...");
+        setTimeout(() => navigate("/"), 2000);
       } else {
-        alert(`Error: ${data.message || "Registration failed"}`);
+        toast.error(`Error: ${data.message || "Registration failed"}`);
       }
     } catch (error) {
       console.error("Error:", error);
-      alert("Something went wrong. Please try again.");
+      toast.error("Something went wrong. Please try again.");
     }
   };
   
@@ -93,47 +96,31 @@ function Login() {
       const data = await response.json();
 
       if (response.ok) {
-        alert("Login Successful! Redirecting...");
+        toast.success("Login Successful! Redirecting...");
+        localStorage.setItem("token", data.token);
+        setTimeout(() => navigate("/home"), 2000);
         dispatch(loginSuccess(data));
         localStorage.setItem("token", data.token); 
-        navigate("/home"); 
       } else {
-        alert(`Error: ${data.message || "Login failed"}`);
+        toast.error(`Error: ${data.message || "Login failed"}`);
       }
     } catch (error) {
       console.error("Error:", error);
-      alert("Something went wrong. Please try again.");
+      toast.error("Something went wrong. Please try again.");
     }
   };
 
   return (
     <div className={`container ${isSignInActive ? "" : "right-panel-active"}`} id="container">
+      <ToastContainer position="top-right" autoClose={2000} />
+      
       {/* Sign Up Form */}
       <div className={`form-container sign-up-container ${isSignInActive ? "hidden" : ""}`}>
         <form onSubmit={handleRegister}>
           <h1>Create Account</h1>
-
-          <input
-            type="text"
-            name="name"
-            placeholder="NAME"
-            required
-            onChange={handleRegisterChange}
-          />
-          <input
-            type="email"
-            name="gemail"
-            placeholder="GSUITE ID"
-            required
-            onChange={handleRegisterChange}
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="PERSONAL EMAIL"
-            required
-            onChange={handleRegisterChange}
-          />
+          <input type="text" name="name" placeholder="NAME" required onChange={handleRegisterChange} />
+          <input type="email" name="gemail" placeholder="GSUITE ID" required onChange={handleRegisterChange} />
+          <input type="email" name="email" placeholder="PERSONAL EMAIL" required onChange={handleRegisterChange} />
 
           <div className="password-container">
             <input
@@ -156,9 +143,7 @@ function Login() {
           </div>
 
           <select name="branch" required onChange={handleRegisterChange}>
-            <option value="" disabled selected>
-              Choose your branch
-            </option>
+            <option value="" disabled selected>Choose your branch</option>
             <option value="BTECH">BTECH</option>
             <option value="MCA">MCA</option>
             <option value="MBA">MBA</option>
@@ -177,21 +162,9 @@ function Login() {
       <div className={`form-container sign-in-container ${isSignInActive ? "" : "hidden"}`}>
         <form onSubmit={handleLogin}>
           <h1>Login</h1>
-          <input
-            type="email"
-            name="email"
-            placeholder="PERSONAL EMAIL"
-            required
-            onChange={handleLoginChange}
-          />
+          <input type="email" name="email" placeholder="PERSONAL EMAIL" required onChange={handleLoginChange} />
           <div className="password-container">
-            <input
-              type="password"
-              name="password"
-              placeholder="PASSWORD"
-              required
-              onChange={handleLoginChange}
-            />
+            <input type="password" name="password" placeholder="PASSWORD" required onChange={handleLoginChange} />
           </div>
           <button type="submit">LOGIN</button>
         </form>
