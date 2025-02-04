@@ -4,8 +4,9 @@ import { useNavigate } from "react-router-dom";
 import { IoIosSchool } from "react-icons/io";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-import "./Login.css";
+import { useDispatch } from "react-redux";
+import { loginSuccess } from "../redux/userSlice"; 
+import './Login.css'
 
 function Login() {
   const navigate = useNavigate();
@@ -70,7 +71,7 @@ function Login() {
 
       if (response.ok) {
         toast.success("Registration Successful! Redirecting...");
-        setTimeout(() => navigate("/register_success"), 2000);
+        setTimeout(() => navigate("/"), 2000);
       } else {
         toast.error(`Error: ${data.message || "Registration failed"}`);
       }
@@ -79,6 +80,8 @@ function Login() {
       toast.error("Something went wrong. Please try again.");
     }
   };
+  
+  const dispatch = useDispatch();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -95,7 +98,9 @@ function Login() {
       if (response.ok) {
         toast.success("Login Successful! Redirecting...");
         localStorage.setItem("token", data.token);
-        setTimeout(() => navigate("/login_success"), 2000);
+        setTimeout(() => navigate("/home"), 2000);
+        dispatch(loginSuccess(data));
+        localStorage.setItem("token", data.token); 
       } else {
         toast.error(`Error: ${data.message || "Login failed"}`);
       }

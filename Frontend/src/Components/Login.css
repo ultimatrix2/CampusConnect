@@ -75,17 +75,6 @@ input {
   padding-right: 40px;
 }
 
-/* .password-toggle {
-  position: absolute;
-  top: 50%;
-  right: 10px;
-  transform: translateY(-50%);
-  cursor: pointer;
-  color: #555;
-  font-size: 18px;
-} */
-
-
 select {
   background-color: #eee;
   border: none;
@@ -104,15 +93,6 @@ select:focus {
   outline: none;
   box-shadow: 0 0 3px #18608a; 
 }
-
-/* select::after {
-  content: '▼';
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
-} */
 
 option {
   color: #333;
@@ -143,12 +123,7 @@ option {
   width: 50%;
   z-index: 2;
 }
-/* .sign-in-container h5{
-  margin: 0;
-  padding-top: 8px;
-  margin-left: 5px; 
-  margin-right: 5px;
-} */
+
 .container.right-panel-active .sign-in-container {
   transform: translateX(100%);
 }
