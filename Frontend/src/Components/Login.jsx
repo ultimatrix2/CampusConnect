@@ -99,8 +99,7 @@ function Login() {
         toast.success("Login Successful! Redirecting...");
         localStorage.setItem("token", data.token);
         setTimeout(() => navigate("/home"), 2000);
-        dispatch(loginSuccess(data));
-        localStorage.setItem("token", data.token); 
+        dispatch(loginSuccess(data)); 
       } else {
         toast.error(`Error: ${data.message || "Login failed"}`);
       }
