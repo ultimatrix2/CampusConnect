@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { IoIosSchool } from "react-icons/io";
+import { useDispatch } from "react-redux";
+import { loginSuccess } from "../redux/userSlice"; 
 import './Login.css'
 function Login() {
   const navigate = useNavigate();
@@ -76,7 +78,7 @@ function Login() {
     }
   };
   
-  
+  const dispatch = useDispatch();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -92,6 +94,7 @@ function Login() {
 
       if (response.ok) {
         alert("Login Successful! Redirecting...");
+        dispatch(loginSuccess(data));
         localStorage.setItem("token", data.token); 
         navigate("/home"); 
       } else {
