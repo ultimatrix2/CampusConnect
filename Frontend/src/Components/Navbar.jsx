@@ -1,11 +1,12 @@
 import React from 'react';
 import './Navbar.css'; 
 import { FaSearch, FaSignOutAlt } from 'react-icons/fa';
+import logo from "../Assests/Photos/Logo.jpeg";
 const Navbar = () => {
   return (
     <nav className="navbar">
       <div className="navbar-left">
-        <img src="src\assets\logo2.jpeg" alt="Campus Connect Logo" className="logo" />
+        <img src={logo} alt="Campus Connect Logo" className="logo" />
         <span className="website-name">Campus Connect</span>
       </div>
       <div className="navbar-center">
