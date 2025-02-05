@@ -1,5 +1,5 @@
 .footer {
-    background-color: #000000; 
+    background-color: #292c2f;
     color: white;
     height: 100px; 
     display: flex;
@@ -14,7 +14,6 @@
     z-index: 1000;
 }
 
-/* Footer Content */
 .footer-content {
     display: flex;
     justify-content: space-between;

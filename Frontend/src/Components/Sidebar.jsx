@@ -42,11 +42,11 @@ const Sidebar = () => {
       <div className="sidebar">
         <h2 className="sidebar-title">Courses</h2>
         <ul>
-          <li onClick={() => handleCourseClick('MCA')}>Course: MCA</li>
-          <li onClick={() => handleCourseClick('MBA')}>Course: MBA</li>
-          <li onClick={() => handleCourseClick('MTech')}>Course: MTech</li>
-          <li onClick={() => handleCourseClick('MSc')}>Course: MSc</li>
-          <li onClick={() => handleCourseClick('BTech')}>Course: BTech</li>
+          <li onClick={() => handleCourseClick('MCA')}> MCA</li>
+          <li onClick={() => handleCourseClick('MBA')}> MBA</li>
+          <li onClick={() => handleCourseClick('MTech')}> MTech</li>
+          <li onClick={() => handleCourseClick('MSc')}> MSc</li>
+          <li onClick={() => handleCourseClick('BTech')}> BTech</li>
         </ul>
       </div>
 
@@ -75,4 +75,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default Sidebar
