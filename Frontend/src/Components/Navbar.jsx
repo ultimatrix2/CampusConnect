@@ -1,8 +1,21 @@
 import React from 'react';
-import './Navbar.css'; 
-import { FaSearch, FaSignOutAlt } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from '../redux/userSlice'; 
+import './Navbar.css';
 import logo from "../Assests/Photos/Logo.jpeg";
+import { FaSearch, FaSignOutAlt } from 'react-icons/fa';
+
 const Navbar = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.user.currentUser);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate('/'); 
+  };
+  
   return (
     <nav className="navbar">
       <div className="navbar-left">
@@ -20,10 +33,13 @@ const Navbar = () => {
         </button>
         </div>
       <div className="navbar-right">
-        <button className="navbar-btn">Dashboard</button>
-        <button className="navbar-btn">Chat</button> 
-        <button className="navbar-btn">Profile</button>
-        <button className="navbar-btn logout-btn" > <FaSignOutAlt size={25} /></button>
+        {user ? (
+          <>
+          <button className="navbar-btn">Dashboard</button>
+          <button className="navbar-btn">Chat</button> 
+          <button className="navbar-btn">Profile</button>
+          <button className="navbar-btn logout-btn" onClick={handleLogout}> <FaSignOutAlt size={25} /></button>
+        </>) : <></>}
       </div>
     </nav>
   );
