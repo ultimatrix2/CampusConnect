@@ -13,7 +13,7 @@ const userSlice = createSlice({
     setAllUsers: (state, action) => { state.allUsers = action.payload; },
     setAllChats: (state, action) => { state.allChats = action.payload; },
     setSelectedChat: (state, action) => { state.selectedChat = action.payload; },
-    logout: (state) => { state.user = null; },
+    logout: (state) => { state.currentUser = null; },
   },
 });
 
