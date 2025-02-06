@@ -15,7 +15,11 @@ const Navbar = () => {
     dispatch(logout());
     navigate('/'); 
   };
-  
+
+  const handleDashboardClick = () => {
+    navigate('/'); 
+  };
+
   return (
     <nav className="navbar">
       <div className="navbar-left">
@@ -28,18 +32,21 @@ const Navbar = () => {
           placeholder="Search..."
           className="search-bar"
         />
-      <button className="search-btn">
+        <button className="search-btn">
           <FaSearch size={20} />
         </button>
-        </div>
+      </div>
       <div className="navbar-right">
         {user ? (
           <>
-          <button className="navbar-btn">Dashboard</button>
-          <button className="navbar-btn">Chat</button> 
-          <button className="navbar-btn">Profile</button>
-          <button className="navbar-btn logout-btn" onClick={handleLogout}> <FaSignOutAlt size={25} /></button>
-        </>) : <></>}
+            <button className="navbar-btn" onClick={handleDashboardClick}>Dashboard</button> 
+            <button className="navbar-btn">Chat</button> 
+            <button className="navbar-btn">Profile</button>
+            <button className="navbar-btn logout-btn" onClick={handleLogout}> 
+              <FaSignOutAlt size={25} />
+            </button>
+          </>
+        ) : <></>}
       </div>
     </nav>
   );
