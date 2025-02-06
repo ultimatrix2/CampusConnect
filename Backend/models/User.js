@@ -33,6 +33,18 @@ const userSchema = new mongoose.Schema({
     branch: {
         type: String,
         required: true
+    },
+
+     // (Optional)
+     codeforcesUsername : {
+        type: String,
+        unique: true,  
+        sparse: true   
+    },
+   
+    codeforcesRating: {
+        type: Number,
+        default: 0  // 
     }
 },{timestamps : true} );
 
@@ -43,5 +55,4 @@ userSchema.pre("save", async function (next) {
     next();
 });
 
-const User = mongoose.model("User", userSchema);
-module.exports = User;
+module.exports = mongoose.model("User", userSchema);

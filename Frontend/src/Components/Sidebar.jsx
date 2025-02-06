@@ -16,9 +16,9 @@ const Sidebar = () => {
         <ul>
           <li onClick={() => handleCourseClick("MCA")}> MCA</li>
           <li onClick={() => handleCourseClick("MBA")}> MBA</li>
-          <li onClick={() => handleCourseClick("MTech")}> MTech</li>
-          <li onClick={() => handleCourseClick("MSc")}> MSc</li>
-          <li onClick={() => handleCourseClick("BTech")}> BTech</li>
+          <li onClick={() => handleCourseClick("MTECH")}> MTech</li>
+          <li onClick={() => handleCourseClick("MSC")}> MSc</li>
+          <li onClick={() => handleCourseClick("BTECH")}> BTech</li>
         </ul>
       </div>
 
