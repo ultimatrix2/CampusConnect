@@ -1,4 +1,4 @@
-const User = require("../models/User");
+const User = require("./../models/User");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 require("dotenv").config();
@@ -9,6 +9,7 @@ const generateToken = (user) => {
 };
 
 // Register User
+
 exports.register = async (req, res) => {
     try {
         const { name, gemail, email, password, confirmPassword, branch } = req.body;

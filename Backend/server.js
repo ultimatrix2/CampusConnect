@@ -3,6 +3,8 @@ const dotenv = require('dotenv');
 const mongoose = require('mongoose')
 const bodyParser = require("body-parser");
 const authRoutes = require("./routes/authRoutes.js");
+const userRouter = require('./controllers/userController.js');
+const codeforcesRouter = require('./routes/routeCodeforces.js');
 const cors=require("cors");
 
 const app = express();
@@ -17,14 +19,21 @@ app.use(cors(
       credentials: true,
     }
 ));
-// Routes
+// Routes 
 app.use("/api/auth", authRoutes);
+
+// routes for user log access
+app.use('/api/user', userRouter);
+app.use('/api/codeforces', codeforcesRouter);
+
 
 mongoose.connect(process.env.MONGO_URL, {
 }).then(() => console.log("MongoDB connected"))
 .catch( err =>
    console.error(err)
 );
+
+
 
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
