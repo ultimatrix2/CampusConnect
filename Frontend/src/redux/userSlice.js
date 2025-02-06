@@ -7,13 +7,20 @@ const userSlice = createSlice({
     allUsers: [],
     allChats: [],
     selectedChat: null,
+    currentUser: JSON.parse(localStorage.getItem("user")) || null,
   },
   reducers: {
-    loginSuccess: (state, action) => { state.currentUser = action.payload; },
+    loginSuccess: (state, action) => { 
+      state.currentUser = action.payload;
+      localStorage.setItem("user", JSON.stringify(action.payload));
+    },
     setAllUsers: (state, action) => { state.allUsers = action.payload; },
     setAllChats: (state, action) => { state.allChats = action.payload; },
     setSelectedChat: (state, action) => { state.selectedChat = action.payload; },
-    logout: (state) => { state.currentUser = null; },
+    logout: (state) => { 
+      state.currentUser = null;
+      localStorage.removeItem("user");
+    },
   },
 });
 
