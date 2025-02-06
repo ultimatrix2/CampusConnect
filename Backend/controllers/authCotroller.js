@@ -13,11 +13,15 @@ exports.register = async (req, res) => {
     try {
         const { name, gemail, email, password, confirmPassword, branch } = req.body;
 
-        // if(!gemail.endsWith("@mnnit.ac.in"))
-        // {
-        //     return res.status(400).json({ message: "Gemail must be a valid MNNIT email (e.g., example@mnnit.ac.in" });
-        // }
+        if(!gemail.endsWith("@mnnit.ac.in"))
+        {
+            return res.status(400).json({ message: "Gsuite mail must be a valid MNNIT email (e.g., example@mnnit.ac.in" });
+        }
         
+        if (!email.endsWith("@gmail.com") && !email.endsWith("@hotmail.com")) {
+            return res.status(400).json({ message: "Email must be a valid Gmail or Hotmail address" });
+        }
+
         if (password !== confirmPassword) {
             return res.status(400).json({ message: "Passwords do not match." });
         }
