@@ -1,11 +1,24 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import Home from "./Components/Home.jsx";
 import Login from "./Components/Login.jsx";
+import { loginSuccess } from "./redux/userSlice";
 
 function App() {
   const user = useSelector((state) => state.user.currentUser);
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    if (storedUser) {
+      dispatch(loginSuccess(storedUser));
+    }
+    setLoading(false);
+  }, [dispatch]);
+
+  if (loading) return <p>Loading...</p>;
 
   return (
     <Router> 
