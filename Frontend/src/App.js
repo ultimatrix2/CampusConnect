@@ -5,6 +5,7 @@ import Home from "./Components/Home.jsx";
 import Login from "./Components/Login.jsx";
 import { loginSuccess } from "./redux/userSlice";
 import Profile from "./Components/Profile.jsx";
+import OtherProfile from "./Pages/OtherProfile.jsx";
 
 function App() {
   const user = useSelector((state) => state.user.currentUser);
@@ -27,7 +28,8 @@ function App() {
         <Route path="/" element={!user ? <Login /> : <Navigate to="/home" />} />
         <Route path="/home" element={user ? <Home /> : <Navigate to="/" />} />
         <Route path="/profile" element={user ? <Profile /> : <Navigate to="/" />} />
-      </Routes>
+        <Route path="/u/:id" element={user ? <OtherProfile /> : <Navigate to="/" />} />
+        </Routes>
     </Router>
   );
 }

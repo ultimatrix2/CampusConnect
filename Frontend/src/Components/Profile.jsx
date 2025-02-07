@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import "./Profile.css"; // Import the CSS file
 
 const UserProfileCard = () => {
+
+  const [message, setMessage] = useState("");
+
   const [userData, setUserData] = useState({
     username: "",
     email: "",
@@ -17,19 +20,31 @@ const UserProfileCard = () => {
     // Fetch user data from backend API
     const fetchUserData = async () => {
       try {
-        const response = await fetch("https://localhost5001/api/user/get-logged-user", {
-        //   credentials: "include",
-        });
-        const data = await response.json();
+
+        const token = localStorage.getItem("token");
+        const response = await fetch("http://localhost:5001/api/user/get-logged-user", {
+          method: "GET",
+          headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`  // Include the token in Authorization header
+          },
+      });
+
+        const data = (await response.json()).data;
+
         if(!data){
             console.error("Error fetching user data:", data);
         }
+
         if (response.ok) {
           setUserData((prevState) => ({
             ...prevState,
-            username: data.username || "",
+            username: data.name || "",
             email: data.email || "Not Available",
             branch: data.branch || "Not Available",
+            codeforcesId: data.codeforcesUsername || "NA",
+            leetcodeId: data.leetcodeUsername || "NA",
+            year: data.year
           }));
         } else {
           console.error("Error fetching user data:", data);
@@ -46,8 +61,41 @@ const UserProfileCard = () => {
     setUserData({ ...userData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setMessage("");
+
+    const token = localStorage.getItem("token");
+
+    if(userData.codeforcesId !== "NA"){
+      await fetch("http://localhost:5001/api/user/update-profile", {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`  // Include the token in Authorization header
+        },
+        body: JSON.stringify({
+            codeforcesUsername: userData.codeforcesId,
+            year: userData.year
+        })
+      });
+      setMessage("Codeforces data saved successfully.");
+  }
+  
+    if(userData.leetcodeId === "NA") return;
+    await fetch("http://localhost:5001/api/user/update-leetcode", {
+      method: "PUT",
+      headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`  // Include the token in Authorization header
+      },
+      body: JSON.stringify({
+        leetcodeUsername: userData.leetcodeId,
+      })
+    });
+
+    setMessage(message+" Leetcode Data updated Succesfully.");
+
     console.log("User Data Submitted:", userData);
   };
 
@@ -76,12 +124,12 @@ const UserProfileCard = () => {
       {/* Year (Dropdown) */}
       <div className="form-group">
         <label>Year</label>
-        <select name="year" value={userData.year} onChange={handleChange} className="input-field">
+        <select name="year" required value={userData.year} onChange={handleChange} className="input-field">
              <option value="">Select Year</option>
-             <option value="Year">2025-Batch</option>
-             <option value="Year">2026-Batch</option>
-             <option value="Year">2027-Batch</option>
-             <option value="Year">2028-Batch</option>
+             <option value="2025">2025-Batch</option>
+             <option value="2026">2026-Batch</option>
+             <option value="2027">2027-Batch</option>
+             <option value="2028">2028-Batch</option>
          </select>
        
       </div>
@@ -99,6 +147,7 @@ const UserProfileCard = () => {
       </div>
 
       {/* Submit Button */}
+      <div>{message}</div>
       <button onClick={handleSubmit} className="submit-button">
         Submit
       </button>
