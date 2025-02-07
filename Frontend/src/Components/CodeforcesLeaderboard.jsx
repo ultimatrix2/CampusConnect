@@ -1,29 +1,26 @@
 import { useEffect, useState } from "react";
 import "./Sidebar.css";
 
-const CodeforcesLeaderboard = ({ selectedCourse }) => {
-
-  console.log(selectedCourse);
+const CodeforcesLeaderboard = ({ selectedCourse, selectedYear }) => {
+  console.log("Selected Filters:", selectedCourse, selectedYear);
 
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
 
   useEffect(() => {
     const fetchRatings = async () => {
       try {
         const token = localStorage.getItem("token");
 
-        //aise he request bhejne h profile page me coding profile data lene k lie
         const response = await fetch("http://localhost:5001/api/user/get-all-users", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`  // Include the token in Authorization header
-            },
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         });
-        
+
         const data = await response.json();
 
         if (data.success) {
@@ -39,22 +36,21 @@ const CodeforcesLeaderboard = ({ selectedCourse }) => {
     };
 
     fetchRatings();
-  }, [selectedCourse]);
+  }, []);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
+  console.log("All Users:", users);
 
-  console.log(users)
+  const filteredUsers = users.filter((user) => {
+    const courseMatch = selectedCourse === "All" || user.branch === selectedCourse;
+    const yearMatch = selectedYear === "All" || user.year?.toString() === selectedYear;
+    return courseMatch && yearMatch;
+  });
 
-  const filteredUsers = selectedCourse
-  ? users.filter(user => {
-    return user.branch == selectedCourse
-  })
-  : users;
+  console.log("Filtered Users:", filteredUsers);
 
-  console.log(filteredUsers)
-  
   return (
     <div className="leaderboard-container">
       <table className="leaderboard-table">
@@ -63,6 +59,7 @@ const CodeforcesLeaderboard = ({ selectedCourse }) => {
             <th>Rank</th>
             <th>Username</th>
             <th>Course</th>
+            <th>Year</th>
             <th>Rating</th>
           </tr>
         </thead>
@@ -83,6 +80,7 @@ const CodeforcesLeaderboard = ({ selectedCourse }) => {
                   </a>
                 </td>
                 <td>{user.branch}</td>
+                <td>{user.year || "NA"}</td>
                 <td>{user.codeforcesRating || "NA"}</td>
               </tr>
             ))}
