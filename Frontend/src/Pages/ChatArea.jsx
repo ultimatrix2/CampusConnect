@@ -1,5 +1,4 @@
 import { useDispatch, useSelector } from "react-redux";
-import { hideLoader, showLoader } from "../redux/loaderSlice";
 import { createNewMessage, getAllMessages } from "../chatApiCalls/message"
 import toast from 'react-hot-toast'
 import { useEffect, useState } from "react";
@@ -20,9 +19,7 @@ function ChatArea() {
                 sender: user._id,
                 text: message
             }
-            dispatch(showLoader());
             const response = await createNewMessage(newMessage);
-            dispatch(hideLoader());
 
             if(response.success){
                 setMessage('');
@@ -30,16 +27,13 @@ function ChatArea() {
                 toast.error(response.message);
             }
         } catch (error) {
-            dispatch(hideLoader());
             toast.error(error.Message);
         }
     }
 
     const getMessage = async () => {
         try {
-            dispatch(showLoader());
             const response = await getAllMessages(selectedChat._id);
-            dispatch(hideLoader());
 
             if(response.success){
                 setAllMessage(response.data);
@@ -47,7 +41,6 @@ function ChatArea() {
                 toast.error(response.message);
             }
         } catch (error) {
-            dispatch(hideLoader());
             toast.error(error.Message);
         }
     }

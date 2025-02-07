@@ -1,7 +1,6 @@
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { createNewChat } from "../chatApiCalls/chat";
-import { hideLoader, showLoader } from "../redux/loaderSlice";
 import { setAllChats, setSelectedChat } from "../redux/userSlice";
 import moment from 'moment';
 import './chat.css';
@@ -14,13 +13,12 @@ function UsersList({ searchKey }) {
         let response = null;
         // console.log("currentUser",currentUser)
         try {
-            dispatch(showLoader());
             const members=[currentUser._id,searchedUserId]
             response = await createNewChat(members);
-            dispatch(hideLoader());
             // if (response.success) {
                 toast.success(response?.message);
                 const newChat = response;
+
                 const updatedChat = [...allChats, newChat];
                 console.log("updatedChat",updatedChat)
                 dispatch(setAllChats(updatedChat));
@@ -28,7 +26,6 @@ function UsersList({ searchKey }) {
             // }
         } catch (error) {
             toast.error(response.message);
-            dispatch(hideLoader());
         }
     }
 
