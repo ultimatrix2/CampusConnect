@@ -1,62 +1,5 @@
-  /********************************************************************
-  ***************************CSS FOR LOADER**************************
-  ********************************************************************/
-  
-  .loader-overlay{
-    position: fixed; /* Sit on top of the page content */
-    width: 100%; /* Full width (cover the whole page) */
-    height: 100%; /* Full height (cover the whole page) */
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(231,76,60,0.7); /* Black background with opacity */
-    z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
-    align-items: center;
-    display: flex;
-    justify-content: center;
-  }
-   
-  .loader-spinner,
-  .loader-spinner:after {
-    box-sizing: border-box;
-  }
-  .loader-spinner {
-    display: inline-block;
-    position: relative;
-    width: 80px;
-    height: 80px;
-  }
-  .loader-spinner:after {
-    content: " ";
-    display: block;
-    border-radius: 50%;
-    width: 0;
-    height: 0;
-    margin: 8px;
-    box-sizing: border-box;
-    border: 32px solid white;
-    border-color: white transparent white transparent;
-    animation: loader-spinner 1.2s infinite;
-  }
-  @keyframes loader-spinner {
-    0% {
-      transform: rotate(0);
-      animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);
-    }
-    50% {
-      transform: rotate(900deg);
-      animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
-    }
-    100% {
-      transform: rotate(1800deg);
-    }
-  }
-  
-  
-  /*******************************************************
-  ********CSS FOR HOME PAGE*******************************
-  ********************************************************/
+  /********CSS FOR Chat Home Page*******************************/
+
   .home-page{
     background-color: #fdedec;
     display: flex;
@@ -73,67 +16,16 @@
     flex:1;
   }
   
+  /********CSS FOR SIDEBAR COMPONENT************************/
   
-  /*******************************************************
-  ********CSS FOR HEADER COMPONENT************************
-  ********************************************************/
-  .app-header{
-    display: flex;
-    flex-wrap: wrap;
-    width: 100%;
-    padding: 10px 30px;
-    justify-content: space-between;
-    border-bottom: #bbb 1px solid;
-  }
-  
-  .app-logo{
-    display: flex;
-    flex-wrap: nowrap;
-    color: #28282B;
-    font-size: 25px;
-    font-weight: bold;
-  }
-  
-  i{
-    margin: 5px 10px;
-  }
-  
-  .app-user-profile{
-    display: flex;
-  }
-  
-  .logged-user-name{
-    color: #28282B;
-    font-weight: bold;
-    padding-top: 10px;
-    padding-right: 20px;
-  }
-  
-  .logged-user-profile-pic{
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background-color: #e74c3c;
-    color: white;
-    font-size: 20px;
-    font-weight: bold;
-    text-align: center;
-    vertical-align: middle;
-    line-height: 40px;
-   } 
-  
-  /*******************************************************
-  ********CSS FOR SIDEBAR COMPONENT************************
-  ********************************************************/
   .app-sidebar{
     width: 30%;
     padding: 0px 20px;
   }
   
   
-  /*******************************************************
-  ********CSS FOR SEARCH COMPONENT************************
-  ********************************************************/
+  /********CSS FOR SEARCH COMPONENT************************/
+
   .user-search-area{
     margin-top: 120px;
     margin-bottom: 20px;
@@ -159,9 +51,8 @@
   }
   
   
-  /*******************************************************
-  ********CSS FOR USER LIST COMPONENT*********************
-  ********************************************************/
+  /********CSS FOR USER LIST COMPONENT*********************/
+
   .filtered-user{
     border-bottom: #ccc 1px solid;
     padding: 10px 10px;
@@ -224,9 +115,7 @@
     color: white;
   }
   
-  /*******************************************************
-  *************CSS STYLES FOR CHAT AREA**************
-  ********************************************************/
+  /*************CSS STYLES FOR CHAT AREA**************/
   
   .app-chat-area{
     background-color: white;
@@ -238,9 +127,8 @@
     height: 85vh;
   }
   
-  /*******************************************************
-  *************CSS STYLES FOR CHAT AREA HEADER************
-  ********************************************************/
+  /*************CSS STYLES FOR CHAT AREA HEADER************/
+
   .app-chat-area-header{
       padding: 10px 30px;
       margin-bottom: 20px;
@@ -250,9 +138,8 @@
       color: #e74c3c;
   }
   
-  /*******************************************************
-  ********CSS STYLES FOR CHAT AREA & CHAT INPUT***********
-  ********************************************************/
+  /********CSS STYLES FOR CHAT AREA & CHAT INPUT***********/
+
   .main-chat-area{
     flex: 1;
     overflow-y: scroll;
@@ -307,9 +194,8 @@
     margin-top: 5px;
   }
   
-  /*****************************************************
-  ***********CUSTOM SCROLLBAR FOR CHATAREA**************
-  ******************************************************/
+  /***********CUSTOM SCROLLBAR FOR CHATAREA**************/
+
   .main-chat-area::-webkit-scrollbar {
     width: 5px;
   }
@@ -331,9 +217,8 @@
     background: #e74c3c; 
   }
   
-  /*******************************************************
-  ***************CSS FOR CHAT MESSAGES********************
-  ********************************************************/
+  /***************CSS FOR CHAT MESSAGES********************/
+
   .message-container{
       display: flex;
   }
@@ -366,9 +251,7 @@
     font-size: 13px;
   }
   
-  /*****************************************************
-  ************MEDIA QUERY FOR USER LIST*****************
-  ******************************************************/
+  /************MEDIA QUERY FOR USER LIST*****************/
   
   @media only screen and (max-width: 1000px) {
     .filter-user-details, .last-message-timestamp {
@@ -384,8 +267,6 @@
         width: 85%
     }
   }
-  
-  
   .unread-message-counter{
     text-align: center;
     float: right;
@@ -403,83 +284,4 @@
   .typing-indicator{
     font-size: 13px;
     color: grey;
-  }
-  
-  
-  /*****************************************************
-  *************CSS STYLES FOR PROFILE PAGE**************
-  ******************************************************/
-  
-  .profile-page-container{
-    display: flex;
-    width: 80%;
-    color: #28282B;
-    margin: 100px auto;
-    padding: 20px 20px;
-    border-radius: 10px;
-    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-  }
-  .profile-pic-container{
-    width: 30%;
-    display: flex;
-    justify-content: center;
-  }
-  .profile-info-container{
-    width: 70%;
-    padding: 30px 10px;
-  }
-  .user-profile-pic-upload, .user-default-profile-avatar{
-    width: 240px;
-    height: 240px;
-    border-radius: 50%;
-    color: #28282B;
-    border: #ddd 5px solid;
-    font-size: 120px;
-    font-weight: bold;
-    text-align: center;
-    vertical-align: middle;
-    line-height: 240px;
-  }
-  
-  .user-profile-name{
-    padding: 10px 0px;
-    border-bottom: #cdcdcd 1.5px solid;
-    margin-bottom: 30px;
-  }
-  .select-profile-pic-container{
-    padding: 30px 0px;
-  }
-  
-  /* file upload button */
-  input[type="file"]::file-selector-button {
-    border-radius: 4px;
-    padding: 0 16px;
-    height: 40px;
-    cursor: pointer;
-    background-color: #28282B;
-    color: white;
-    border: 1px solid rgba(0, 0, 0, 0.16);
-    box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.05);
-    margin-right: 16px;
-    transition: background-color 200ms;
-  }
-  
-  /* file upload button hover state */
-  input[type="file"]::file-selector-button:hover {
-    background-color: #f3f4f6;
-    color: #28282B;
-  }
-  
-  /* file upload button active state */
-  input[type="file"]::file-selector-button:active {
-    background-color: #e5e7eb;
-    color: #28282B;
-  }
-  
-  .logout-button{
-    background-color: transparent;
-    color:#e74c3c ;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
   }
