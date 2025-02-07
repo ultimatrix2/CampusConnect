@@ -15,7 +15,7 @@ const CodeforcesLeaderboard = ({ selectedCourse }) => {
       try {
         const token = localStorage.getItem("token");
 
-        //aise he request bhejne h profile page me coding profile data lene k lie
+        
         const response = await fetch("http://localhost:5001/api/user/get-all-users", {
             method: "GET",
             headers: {

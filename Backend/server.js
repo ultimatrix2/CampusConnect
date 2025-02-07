@@ -5,6 +5,8 @@ const bodyParser = require("body-parser");
 const authRoutes = require("./routes/authRoutes.js");
 const userRouter = require('./controllers/userController.js');
 const codeforcesRouter = require('./routes/routeCodeforces.js');
+const chatRouter = require('./controllers/chatController');
+const messageRouter = require('./controllers/messageController');
 const cors=require("cors");
 
 const app = express();
@@ -25,6 +27,9 @@ app.use("/api/auth", authRoutes);
 // routes for user log access
 app.use('/api/user', userRouter);
 app.use('/api/codeforces', codeforcesRouter);
+
+app.use('/api/chat' ,chatRouter);
+app.use('/api/message', messageRouter);
 
 
 mongoose.connect(process.env.MONGO_URL, {

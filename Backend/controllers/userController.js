@@ -96,8 +96,7 @@ router.put("/update-profile", authMiddleware, async (req, res) => {
             success: true,
             message: "Profile updated successfully",
             data: {
-                firstname: user.firstname,
-                lastname: user.lastname,
+                name: user.name,
                 email: user.email,
                 codeforcesUsername: user.codeforcesUsername,
                 codeforcesRating: user.codeforcesRating,
@@ -332,8 +331,7 @@ router.put("/update-leetcode", authMiddleware, async (req, res) => {
             success: true,
             message: "LeetCode profile updated successfully",
             data: {
-                firstname: user.firstname,
-                lastname: user.lastname,
+                name: user.name,
                 email: user.email,
                 leetcodeUsername: user.leetcodeUsername,
                 leetcodeRating: user.leetcodeRating,
