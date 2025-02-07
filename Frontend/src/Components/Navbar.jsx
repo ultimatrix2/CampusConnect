@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../redux/userSlice'; 
@@ -6,8 +6,7 @@ import './Navbar.css';
 import logo from "../Assests/Photos/Logo.jpeg";
 import { FaSearch, FaSignOutAlt } from 'react-icons/fa';
 
-const Navbar = ({search, setSearch}) => {
-  console.log(setSearch)
+const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.currentUser);
@@ -20,21 +19,9 @@ const Navbar = ({search, setSearch}) => {
   const handleDashboardClick = () => {
     navigate('/'); 
   };
-
-  const handleChat = () => {
-    navigate('/chat');
-  }
-
-  const handleInputChange = (e) => {
-    const searchValue = e.target.value;
-    setSearch(searchValue); 
-  }
-
-  useEffect(() => {
-    if (search) {
-      navigate("/");
-    }
-  }, [search]);
+  const handleProfileClick = () => {
+    navigate('/profile'); 
+  };
 
   return (
     <nav className="navbar">
@@ -47,7 +34,6 @@ const Navbar = ({search, setSearch}) => {
           type="text"
           placeholder="Search..."
           className="search-bar"
-          onChange={handleInputChange}
         />
         <button className="search-btn">
           <FaSearch size={20} />
@@ -57,8 +43,8 @@ const Navbar = ({search, setSearch}) => {
         {user ? (
           <>
             <button className="navbar-btn" onClick={handleDashboardClick}>Dashboard</button> 
-            <button className="navbar-btn" onClick={handleChat}>Chat</button> 
-            <button className="navbar-btn">Profile</button>
+            <button className="navbar-btn" >Chat</button> 
+            <button className="navbar-btn" onClick={handleProfileClick}>Profile</button>
             <button className="navbar-btn logout-btn" onClick={handleLogout}> 
               <FaSignOutAlt size={25} />
             </button>
