@@ -13,6 +13,7 @@ const CodeforcesLeaderboard = ({ selectedCourse, selectedYear }) => {
       try {
         const token = localStorage.getItem("token");
 
+        
         const response = await fetch("http://localhost:5001/api/user/get-all-users", {
           method: "GET",
           headers: {

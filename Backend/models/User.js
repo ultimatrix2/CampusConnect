@@ -45,7 +45,22 @@ const userSchema = new mongoose.Schema({
     codeforcesRating: {
         type: Number,
         default: 0  // 
+    }, 
+    // LeetCode Info
+    leetcodeUsername: {
+        type: String,
+        unique: true,
+        sparse: true
+    },
+    leetcodeRating: {
+        type: Number,
+        default: 0
+    },
+    year: {
+        type: Number,  
+        default: null   
     }
+
 },{timestamps : true} );
 
 // Hash password before saving

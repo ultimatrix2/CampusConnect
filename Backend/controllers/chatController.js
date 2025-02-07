@@ -5,7 +5,7 @@ const Chat = require('./../models/chat');
 router.post('/create-new-chat' , authMiddleware , async (req, res) => {
     try {
 
-        const chat = new Chat( req.body);
+        const chat = new Chat( req.body );
         const savedChat = await chat.save();
 
         res.status(201).send({
@@ -24,11 +24,11 @@ router.post('/create-new-chat' , authMiddleware , async (req, res) => {
 
 router.get('/get-all-chats' , authMiddleware , async (req, res) => {
     try {
-
-        const allChats = await  Chat.find({ members : { $in : req.user.userId } })
-                                                        .populate('members')
-                                                        .populate('lastMessage')
-                                                        .sort({ updatedAt : -1});
+        console.log("id" +req.user.userId);
+        const allChats = await  Chat.find({ members : { $in : req.user.userId } }).populate('members').populate('lastMessage').sort({ updatedAt : -1});
+                                                        // 
+                                                        // 
+                                                        //
         
         res.status(200).send({
             message: 'all chats fetched successfully',

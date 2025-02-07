@@ -2,6 +2,7 @@ const router = require('express').Router();
 const User = require('./../models/User');
 const axios = require("axios");
 const authMiddleware = require('./../middleware/authMiddleware');
+const cheerio = require('cheerio');
 // const userRouter = require('./controllers/userController');
 // const { loadEnvFile } = require('process');
 
@@ -57,21 +58,26 @@ router.get('/get-all-users', authMiddleware, async (req, res) => {
 });
 
 // Update Codeforces username & fetch rating
+
+
+// Update Codeforces Username, Contest Rating & Year
 router.put("/update-profile", authMiddleware, async (req, res) => {
     try {
-        const { codeforcesUsername } = req.body;
+        const { codeforcesUsername, year } = req.body;
 
+        // Validate Input
         if (!codeforcesUsername) {
             return res.status(400).json({ success: false, message: "Codeforces username is required" });
         }
+        if (!year || isNaN(year) ) {
+            return res.status(400).json({ success: false, message: "Invalid year provided" });
+        }
 
-        // getting data of user ------
         let user = await User.findById(req.user.userId);
         if (!user) {
             return res.status(404).json({ success: false, message: "User not found" });
         }
 
-        // Fetching  Codeforces user data ( check the front part )
         const cfResponse = await axios.get(`https://codeforces.com/api/user.info?handles=${codeforcesUsername}`);
 
         if (cfResponse.data.status !== "OK") {
@@ -81,20 +87,20 @@ router.put("/update-profile", authMiddleware, async (req, res) => {
         const cfData = cfResponse.data.result[0];
         const contestRating = cfData.rating || 0; 
 
-        // Updating  user profile
         user.codeforcesUsername = codeforcesUsername;
         user.codeforcesRating = contestRating;
+        user.year = year;  
         await user.save();
 
         res.status(200).json({
             success: true,
             message: "Profile updated successfully",
             data: {
-                firstname: user.firstname,
-                lastname: user.lastname,
+                name: user.name,
                 email: user.email,
                 codeforcesUsername: user.codeforcesUsername,
-                codeforcesRating: user.codeforcesRating
+                codeforcesRating: user.codeforcesRating,
+                year: user.year
             }
         });
 
@@ -103,28 +109,172 @@ router.put("/update-profile", authMiddleware, async (req, res) => {
     }
 });
 
+
+
+// router.post("/userLeetcode", async (req,res,next)=>{
+
+//     console.log(await fetchLeetCodeRating(req.body.leetcodeUsername));
+
+//     res.status(200).json({message: "Ok"});
+
+// });
+
+// // Function to fetch LeetCode rating using web scraping
+// const fetchLeetCodeRating = async (username) => {
+//     try {
+
+//         const requestOptions = {
+//             method: "GET",
+//             redirect: "follow"
+//           };
+          
+//        const r = await fetch(`https://leetcode.com/u/${username}`, requestOptions);
+//         const response = await r.text();
+//         const $ = await cheerio.load(response);
+
+//         console.log(response)
+
+
+//         // Extract rating (Update selector if LeetCode changes UI)
+
+//         let ratingText = "Not found";
+//         $('.text-label-3').each((index, element) => {
+//             if ($(element).text().trim() === "Contest Rating") {
+//                 ratingText = $(element).next().text().trim();
+//             }
+//         });
+
+//         console.log(ratingText)
+
+//         return ratingText ? parseInt(ratingText) : 0;
+//     } catch (error) {
+//         console.error("Failed to fetch LeetCode rating:", error.message);
+//         return 0; // Return 0 if fetch fails
+//     }
+// };
+
+// it's working and fetching the leetcode data
+
+// async function getLeetcodeGraphqlResponse(query, variables) {
+//     let data = JSON.stringify({
+//         query: query, 
+//         variables: variables
+//     });
+    
+//     let config = {
+//         method: 'post',
+//         url: 'https://leetcode.com/graphql/',
+//         headers: {
+//             'Content-Type': 'application/json',
+//             'Referer': 'https://leetcode.com/'  // Add Referer header
+//         },
+//         data: data
+//     };
+    
+//     return axios(config);    
+// }
+
+// router.post("/leetcode" , async (req, res, next) => { 
+
+    
+//         //we will be using graphql to retrieve user details from leetcode
+//         //leetcode does not have official api
+//         const username = req.body.username;
+
+//         console.log(username);
+
+//         let query = `
+//             query userPublicProfile($username: String!, $year: Int ) {
+//               matchedUser(username: $username) {
+//                 profile {
+//                   ranking
+//                   userAvatar
+//                 }
+//                 submitStatsGlobal {
+//                     acSubmissionNum {
+//                         difficulty
+//                         count
+//                     }
+//                 }
+//                 userCalendar(year: $year) {
+//                   streak
+//                 }
+//                 languageProblemCount {
+//                   languageName
+//                 }
+//               }
+//             }
+//         `;
+//         let response = await getLeetcodeGraphqlResponse(query, {username});
+    
+//         if (!response.data.data.matchedUser) {
+//             res.status(400).json({
+//                 status: "fail", message: "No such user found!"
+//             })
+//         }
+    
+//         const handler = response.data.data.matchedUser ? username : "";
+//         const rank = response.data.data.matchedUser?.profile?.ranking || 0;
+//         const streak = response.data.data.matchedUser?.userCalendar?.streak || 0;
+//         const languagesUsed = response.data.data.matchedUser?.languageProblemCount.map(language => language.languageName) || [];
+//         const submissionCount = response.data.data.matchedUser?.submitStatsGlobal?.acSubmissionNum || [];
+    
+//         query = `query userContestRankingInfo($username: String!) {
+//                        userContestRanking(username: $username) {
+//                                 rating
+//                             }
+//                         }
+//                                                                               `
+//         response = await getLeetcodeGraphqlResponse(query, {username});
+
+//         console.log(response.data.data);
+        
+
+//         res.status(200).json({
+//             status: "success", data: {
+//                 platformName:"LEETCODE",
+//                 profileLink: `https://leetcode.com/${username}/`, handler, rank, streak, languagesUsed, submissionCount, rating: response.data.data?.userContestRanking?.rating || "NA"
+//             }
+//         })}
+//     );
+
+
+
+// module.exports = router;
+
 async function getLeetcodeGraphqlResponse(query, variables) {
-    let data = JSON.stringify({
-        query: query, variables: variables
-    });
+    let data = JSON.stringify({ query, variables });
 
     let config = {
-        method: 'post', url: 'https://leetcode.com/graphql/', headers: {'Content-Type': 'application/json',}, data: data
+        method: "post",
+        url: "https://leetcode.com/graphql/",
+        headers: {
+            "Content-Type": "application/json",
+            "Referer": "https://leetcode.com/"
+        },
+        data: data
     };
 
     return axios(config);
 }
 
-router.post("/leetcode" , async (req, res, next) => { 
+// Update LeetCode Username and Rating
+router.put("/update-leetcode", authMiddleware, async (req, res) => {
+    try {
+        const { leetcodeUsername } = req.body;
 
-    
-        //we will be using graphql to retrieve user details from leetcode
-        //leetcode does not have official api
-        const username = req.body.username;
+        if (!leetcodeUsername) {
+            return res.status(400).json({ success: false, message: "LeetCode username is required" });
+        }
 
-        console.log(username);
+        let user = await User.findById(req.user.userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+        console.log(user);
 
-        const query = `
+
+        let query = `
             query userPublicProfile($username: String!, $year: Int ) {
               matchedUser(username: $username) {
                 profile {
@@ -146,28 +296,54 @@ router.post("/leetcode" , async (req, res, next) => {
               }
             }
         `;
-        const response = await getLeetcodeGraphqlResponse(query, {username});
-    
+        let response = await getLeetcodeGraphqlResponse(query, { username: leetcodeUsername });
+
         if (!response.data.data.matchedUser) {
-            res.status(400).json({
-                status: "fail", message: "No such user found!"
-            })
+            return res.status(400).json({ success: false, message: "Invalid LeetCode username" });
         }
-    
-        const handler = response.data.data.matchedUser ? username : "";
+
+        const handler = response.data.data.matchedUser ? leetcodeUsername  : "";
         const rank = response.data.data.matchedUser?.profile?.ranking || 0;
         const streak = response.data.data.matchedUser?.userCalendar?.streak || 0;
         const languagesUsed = response.data.data.matchedUser?.languageProblemCount.map(language => language.languageName) || [];
         const submissionCount = response.data.data.matchedUser?.submitStatsGlobal?.acSubmissionNum || [];
-    
-        res.status(200).json({
-            status: "success", data: {
-                platformName:"LEETCODE",
-                profileLink: `https://leetcode.com/${username}/`, handler, rank, streak, languagesUsed, submissionCount
+
+        // Fetch userContestRanking separately
+        query = `
+            query userContestRankingInfo($username: String!) {
+                userContestRanking(username: $username) {
+                    rating
+                }
             }
-        })}
-    );
+        `;
+        response = await getLeetcodeGraphqlResponse(query, { username: leetcodeUsername });
 
+        console.log(response.data.data);
+        //  (default data 0 if not found)
+        const leetcodeRating = response.data.data.userContestRanking?.rating || 0;
 
+        user.leetcodeUsername = leetcodeUsername;
+        user.leetcodeRating = Math.floor(leetcodeRating); 
+
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            message: "LeetCode profile updated successfully",
+            data: {
+                name: user.name,
+                email: user.email,
+                leetcodeUsername: user.leetcodeUsername,
+                leetcodeRating: user.leetcodeRating,
+                platformName:"LEETCODE",
+                profileLink: `https://leetcode.com/u/${leetcodeUsername }/`, handler, rank, streak, languagesUsed, submissionCount, rating: Math.floor(response.data.data?.userContestRanking?.rating || 0)
+                           
+            }
+        });
+
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
 
 module.exports = router;
