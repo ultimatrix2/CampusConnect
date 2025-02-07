@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { hideLoader, showLoader } from "../redux/loaderSlice";
-import { createNewMessage, getAllMessages } from "../apiCalls/message"
+import { createNewMessage, getAllMessages } from "../chatApiCalls/message"
 import toast from 'react-hot-toast'
 import { useEffect, useState } from "react";
 import './chat.css'

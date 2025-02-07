@@ -1,6 +1,6 @@
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
-import { createNewChat } from "../apiCalls/chat";
+import { createNewChat } from "../chatApiCalls/chat";
 import { hideLoader, showLoader } from "../redux/loaderSlice";
 import { setAllChats, setSelectedChat } from "../redux/userSlice";
 import moment from 'moment';
