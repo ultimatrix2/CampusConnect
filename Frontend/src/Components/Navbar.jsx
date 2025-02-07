@@ -1,26 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../redux/userSlice'; 
 import './Navbar.css';
 import logo from "../Assests/Photos/Logo.jpeg";
-import { FaSearch, FaSignOutAlt } from 'react-icons/fa';
+import { FaSignOutAlt, FaBars, FaTimes } from 'react-icons/fa'; 
 
 const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.currentUser);
+  
+  const [isOpen, setIsOpen] = useState(false); 
 
   const handleLogout = () => {
     dispatch(logout());
     navigate('/'); 
   };
 
-  const handleDashboardClick = () => {
-    navigate('/'); 
-  };
-  const handleProfileClick = () => {
-    navigate('/profile'); 
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
   };
 
   const handleChat = () => {
@@ -33,17 +32,14 @@ const Navbar = () => {
         <img src={logo} alt="Campus Connect Logo" className="logo" />
         <span className="website-name">Campus Connect</span>
       </div>
-      <div className="navbar-center">
-        <input
-          type="text"
-          placeholder="Search..."
-          className="search-bar"
-        />
-        <button className="search-btn">
-          <FaSearch size={20} />
-        </button>
-      </div>
-      <div className="navbar-right">
+
+      
+      <button className="menu-btn" onClick={toggleMenu}>
+        {isOpen ? <FaTimes size={25} /> : <FaBars size={25} />}
+      </button>
+
+    
+      <div className={`navbar-right ${isOpen ? "open" : ""}`}>
         {user ? (
           <>
             <button className="navbar-btn" onClick={handleDashboardClick}>Dashboard</button> 
@@ -53,7 +49,7 @@ const Navbar = () => {
               <FaSignOutAlt size={25} />
             </button>
           </>
-        ) : <></>}
+        ) : null}
       </div>
     </nav>
   );
