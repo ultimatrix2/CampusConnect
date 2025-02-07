@@ -15,7 +15,7 @@ exports.getUserDetails = async (req, res, next) => {
     
     //codeforces has an official api to retrieve user data, but the data returned is very limited
     //for example we don't have endpoint to retrieve the streak or total questions submission
-    //will be web scraping
+   
     const username = req.body.username;
     const profileLink = `https://codeforces.com/profile/${username}`;
 
@@ -43,9 +43,12 @@ exports.getUserDetails = async (req, res, next) => {
         count: getElementByXpath(document, "//*[@id=\"pageContent\"]/div[4]/div/div[3]/div[1]/div[1]/div[1]").textContent.replace(/\D/g, "") || 0
     }];
 
+
+    const title = getElementByXpath(document, "//*[@id=\"pageContent\"]/div[2]/div/div[2]/div/div[1]/span").textContent;
+
     res.status(200).json({
         status: 'success', data: {
-            platformName: "CODEFORCES", profileLink, handler, rank, streak, submissionCount
+            platformName: "CODEFORCES", profileLink, handler, rank, streak, submissionCount, title
         }
     })
 } catch(e){
