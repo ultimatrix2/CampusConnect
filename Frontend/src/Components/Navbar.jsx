@@ -18,13 +18,21 @@ const Navbar = () => {
     navigate('/'); 
   };
 
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
+  const handleDashboardClick = () => {
+    navigate('/');
   };
 
   const handleChat = () => {
     navigate('/chat');
+  };
+
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
   }
+
+  const handleProfileClick = () => {
+    navigate('/profile');
+  };
 
   return (
     <nav className="navbar">
