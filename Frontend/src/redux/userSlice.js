@@ -1,4 +1,21 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice , createAsyncThunk} from "@reduxjs/toolkit";
+import axios from "axios";
+export const fetchAllUsers = createAsyncThunk(
+  "user/fetchAllUsers",
+  async (_, { rejectWithValue }) => {
+    try{
+      const token = localStorage.getItem('token');
+        const response = await axios.get('http://localhost:5001/api/user/get-all-users', {headers: {Authorization: `Bearer ${token}`}});
+        return response.data.data;
+        
+        // setAllUsers(response.data.data);
+      
+        // return response.data;
+    }catch(error){
+        return error;
+    }
+  }
+);
 
 const userSlice = createSlice({
   name: "user",
@@ -12,9 +29,9 @@ const userSlice = createSlice({
   reducers: {
     loginSuccess: (state, action) => { 
       state.currentUser = action.payload;
+      console.log(action.payload)
       localStorage.setItem("user", JSON.stringify(action.payload));
     },
-    setAllUsers: (state, action) => { state.allUsers = action.payload; },
     setAllChats: (state, action) => { state.allChats = action.payload; },
     setSelectedChat: (state, action) => { state.selectedChat = action.payload; },
     logout: (state) => { 
@@ -22,7 +39,16 @@ const userSlice = createSlice({
       localStorage.removeItem("user");
     },
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchAllUsers.fulfilled, (state, action) => {
+        state.allUsers = action.payload; 
+      })
+      .addCase(fetchAllUsers.rejected, (state, action) => {
+        console.error("Failed to fetch users:", action.payload);
+      });
+  },
 });
 
-export const { loginSuccess, logout, setAllUsers, setAllChats, setSelectedChat } = userSlice.actions;
+export const { loginSuccess, logout, setAllChats, setSelectedChat } = userSlice.actions;
 export default userSlice.reducer;

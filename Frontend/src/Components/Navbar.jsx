@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../redux/userSlice'; 
@@ -6,7 +6,8 @@ import './Navbar.css';
 import logo from "../Assests/Photos/Logo.jpeg";
 import { FaSearch, FaSignOutAlt } from 'react-icons/fa';
 
-const Navbar = () => {
+const Navbar = ({search, setSearch}) => {
+  console.log(setSearch)
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.currentUser);
@@ -24,6 +25,17 @@ const Navbar = () => {
     navigate('/chat');
   }
 
+  const handleInputChange = (e) => {
+    const searchValue = e.target.value;
+    setSearch(searchValue); 
+  }
+
+  useEffect(() => {
+    if (search) {
+      navigate("/");
+    }
+  }, [search]);
+
   return (
     <nav className="navbar">
       <div className="navbar-left">
@@ -35,6 +47,7 @@ const Navbar = () => {
           type="text"
           placeholder="Search..."
           className="search-bar"
+          onChange={handleInputChange}
         />
         <button className="search-btn">
           <FaSearch size={20} />
