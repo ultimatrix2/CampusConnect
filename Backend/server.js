@@ -4,7 +4,6 @@ const mongoose = require('mongoose')
 const bodyParser = require("body-parser");
 const authRoutes = require("./routes/authRoutes.js");
 const userRouter = require('./controllers/userController.js');
-const chatRouter = require('./controllers/chatController.js');
 const codeforcesRouter = require('./routes/routeCodeforces.js');
 // const chatRouter = require('./controllers/chatController');
 const messageRouter = require('./controllers/messageController');
