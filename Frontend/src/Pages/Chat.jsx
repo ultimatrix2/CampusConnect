@@ -10,7 +10,7 @@ function Chat() {
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
   console.log(setSearch)
-  const  selectedChat  = useSelector(state => state.userReducer);
+  const  selectedChat  = useSelector(state => state.user.selectedChat);
   console.log("sel",selectedChat)
 
   const handleSearch = (e) => {

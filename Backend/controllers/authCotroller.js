@@ -50,7 +50,6 @@ exports.login = async (req, res) => {
         const { email, password } = req.body;
 
         const user = await User.findOne({ email });
-        console.log(user.email);
         
        // if(user.email)
         if (!user) {
