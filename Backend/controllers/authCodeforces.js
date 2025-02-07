@@ -1,6 +1,8 @@
 
 const {JSDOM} = require("jsdom");
 const axios = require("axios");
+const User = require('./../models/User');
+
 
 
 //function to get DOM node represented by the given xpath
@@ -12,11 +14,14 @@ function getElementByXpath(document, path) {
 //function to return user info else than heatmap
 exports.getUserDetails = async (req, res, next) => {
     try{
-    
-    //codeforces has an official api to retrieve user data, but the data returned is very limited
-    //for example we don't have endpoint to retrieve the streak or total questions submission
-   
-    const username = req.body.username;
+       
+       const id = req.body.id;
+        const user = await User.findById(id);
+        const username = user.codeforcesUsername;
+
+
+        console.log("codeforces: "+username)
+
     const profileLink = `https://codeforces.com/profile/${username}`;
 
     const requestOptions = {
