@@ -5,7 +5,7 @@ const Chat = require('./../models/chat');
 router.post('/create-new-chat' , authMiddleware , async (req, res) => {
     try {
 
-        const chat = new Chat( req.body);
+        const chat = new Chat( req.body );
         const savedChat = await chat.save();
 
         res.status(201).send({

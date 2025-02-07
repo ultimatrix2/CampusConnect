@@ -52,9 +52,8 @@ function ChatArea() {
     }
 
     function formatName(user) {
-        let fname = user.firstname.at(0).toUpperCase() + user.firstname.slice(1).toLowerCase();
-        let lname = user.lastname.at(0).toUpperCase() + user.lastname.slice(1).toLowerCase();
-        return fname + ' ' + lname;
+        let fname = user.name.at(0).toUpperCase() + user.name.slice(1).toLowerCase();
+        return fname;
     }
 
     useEffect(() => {
@@ -64,7 +63,7 @@ function ChatArea() {
     return <>
         {!selectedChat && <div class="app-chat-area">
             <div className="app-chat-area-header">
-                ( selectedUser.firstname + " " + selectedUser.lastname )
+                ( selectedUser.name )
             </div>
             <div className="main-chat-area">
                 CHAT AREA

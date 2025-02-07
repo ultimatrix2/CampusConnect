@@ -8,16 +8,19 @@ import './chat.css';
 
 function UsersList({ searchKey }) {
     const { allUsers, allChats, user: currentUser, selectedChat } = useSelector(state => state.user);
-    console.log(allUsers, allChats, currentUser, selectedChat);
+    console.log('current users', currentUser);
     const dispatch = useDispatch();
     const startNewChat = async (searchedUserId) => {
         let response = null;
+        // console.log("currentUser",currentUser)
         try {
             dispatch(showLoader());
-            response = await createNewChat([currentUser._id, searchedUserId]);
+            response = await createNewChat({ searchedUserId});
+            // console.log("duhusgcuhd")
+            console.log(response)
             dispatch(hideLoader());
             if (response.success) {
-                toast.success(response.message);
+                toast.success(response?.message);
                 const newChat = response.data;
                 const updatedChat = [...allChats, newChat];
                 dispatch(setAllChats(updatedChat));
@@ -71,18 +74,18 @@ function UsersList({ searchKey }) {
     }
 
     function formatName(user) {
-        let fname = user.firstname.at(0).toUpperCase() + user.firstname.slice(1).toLowerCase();
-        let lname = user.lastname.at(0).toUpperCase() + user.lastname.slice(1).toLowerCase();
-        return fname + ' ' + lname;
+        let fname = user.name.at(0).toUpperCase() + user.name.slice(1).toLowerCase();
+        return fname;
     }
+
+    console.log(allUsers)
 
     return (
         allUsers
-            .filter(user => {
+            ?.filter(user => {
                 return (
                     (
-                        user.firstname.toLowerCase().includes(searchKey.toLowwerCase()) ||
-                        user.lastname.toLowerCase().includes(searchKey.toLowerCase())) &&
+                        user.name.toLowerCase().includes(searchKey.toLowerCase())) &&
                     searchKey
                 ) || (allChats.some(chat => chat.members.map( m => m._id ).includes(user._id)));
             })
@@ -95,8 +98,7 @@ function UsersList({ searchKey }) {
                             {user.profilePic && <img src={user.profilePic} alt="Profile Pic" class="user-profile-image" />}
                             {!user.profilePic && <div className={ IsSelectedChat ? "user-selected-avatar" : "user-default-avatar" }>
                                 {
-                                    user.firstname.charAt(0).toUpperCase() +
-                                    user.lastname.charAt(0).toUpperCase()
+                                    user.name.charAt(0).toUpperCase()
                                 }
                             </div>}
                             <div className="filter-user-details">
