@@ -1,5 +1,4 @@
 import { useDispatch, useSelector } from "react-redux";
-import { hideLoader, showLoader } from "../redux/loaderSlice";
 import { createNewMessage, getAllMessages } from "../chatApiCalls/message"
 import toast from 'react-hot-toast'
 import { useEffect, useState } from "react";
@@ -7,7 +6,8 @@ import './chat.css'
 
 function ChatArea() {
     const dispatch = useDispatch();
-    const { selectedChat, user } = useSelector(state => state.userReducer);
+    const { selectedChat, user } = useSelector(state => state.user);
+    console.log("selectedChat",selectedChat)
     const selectedUser = selectedChat.members.find(u => u._id !== user._id);
     const [message, setMessage] = useState('');
     const [allMessage, setAllMessage] = useState([]);
@@ -19,9 +19,7 @@ function ChatArea() {
                 sender: user._id,
                 text: message
             }
-            dispatch(showLoader());
             const response = await createNewMessage(newMessage);
-            dispatch(hideLoader());
 
             if(response.success){
                 setMessage('');
@@ -29,16 +27,13 @@ function ChatArea() {
                 toast.error(response.message);
             }
         } catch (error) {
-            dispatch(hideLoader());
             toast.error(error.Message);
         }
     }
 
     const getMessage = async () => {
         try {
-            dispatch(showLoader());
             const response = await getAllMessages(selectedChat._id);
-            dispatch(hideLoader());
 
             if(response.success){
                 setAllMessage(response.data);
@@ -46,7 +41,6 @@ function ChatArea() {
                 toast.error(response.message);
             }
         } catch (error) {
-            dispatch(hideLoader());
             toast.error(error.Message);
         }
     }
@@ -61,9 +55,9 @@ function ChatArea() {
     }, [selectedChat])
 
     return <>
-        {!selectedChat && <div class="app-chat-area">
+        {selectedChat && <div class="app-chat-area">
             <div className="app-chat-area-header">
-                ( selectedUser.name )
+                { selectedUser }
             </div>
             <div className="main-chat-area">
                 CHAT AREA
@@ -77,8 +71,9 @@ function ChatArea() {
                 />
                 <button 
                     className="fa fa-paper-plane send-message-btn" 
-                    aria-hidden="true">
-                    onClick={ sendMessage }
+                    aria-hidden="true"
+                    onClick={ ()=>sendMessage() } >
+                        Send
                 </button>
             </div>
         </div>}

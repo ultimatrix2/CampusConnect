@@ -28,8 +28,6 @@ app.use("/api/auth", authRoutes);
 app.use('/api/user', userRouter);
 app.use('/api/codeforces', codeforcesRouter);
 app.use('/api/chat', chatRouter);
-
-app.use('/api/chat' ,chatRouter);
 app.use('/api/message', messageRouter);
 
 

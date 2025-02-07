@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { useSelector, useDispatch } from "react-redux";
 import Home from "./Components/Home.jsx";
 import Login from "./Components/Login.jsx";
+import Chat from "./Pages/Chat.jsx";
 import { loginSuccess } from "./redux/userSlice";
 import Profile from "./Components/Profile.jsx";
 import OtherProfile from "./Pages/OtherProfile.jsx";
@@ -27,6 +28,7 @@ function App() {
       <Routes> 
         <Route path="/" element={!user ? <Login /> : <Navigate to="/home" />} />
         <Route path="/home" element={user ? <Home /> : <Navigate to="/" />} />
+        <Route path="/chat" element={user ? <Chat /> : <Navigate to="/" />} />
         <Route path="/profile" element={user ? <Profile /> : <Navigate to="/" />} />
         <Route path="/u/:id" element={user ? <OtherProfile /> : <Navigate to="/" />} />
         </Routes>

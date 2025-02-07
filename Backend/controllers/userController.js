@@ -10,8 +10,8 @@ const cheerio = require('cheerio');
 
 router.get('/get-logged-user', authMiddleware, async (req, res) => {
     try{
-
         const user = await User.findOne({ _id: req.user.userId });
+        console.log("object",user);
         
         if (!user) {
             return res.status(404).json({

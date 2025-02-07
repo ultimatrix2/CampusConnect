@@ -22,6 +22,10 @@ const Navbar = () => {
     setIsOpen(!isOpen);
   };
 
+  const handleChat = () => {
+    navigate('/chat');
+  }
+
   return (
     <nav className="navbar">
       <div className="navbar-left">
@@ -38,9 +42,9 @@ const Navbar = () => {
       <div className={`navbar-right ${isOpen ? "open" : ""}`}>
         {user ? (
           <>
-            <button className="navbar-btn" onClick={() => navigate('/')}>Dashboard</button>
-            <button className="navbar-btn">Chat</button>
-            <button className="navbar-btn" onClick={() => navigate('/profile')}>Profile</button>
+            <button className="navbar-btn" onClick={handleDashboardClick}>Dashboard</button> 
+            <button className="navbar-btn" onClick={handleChat}>Chat</button> 
+            <button className="navbar-btn" onClick={handleProfileClick}>Profile</button>
             <button className="navbar-btn logout-btn" onClick={handleLogout}> 
               <FaSignOutAlt size={25} />
             </button>

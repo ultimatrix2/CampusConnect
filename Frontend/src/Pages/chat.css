@@ -116,6 +116,8 @@
   /*************CSS STYLES FOR CHAT AREA**************/
   
   .app-chat-area{
+    margin-top: 7rem;
+    margin-bottom: 10px;
     background-color: white;
     width: 70%;
     padding: 20px 30px;

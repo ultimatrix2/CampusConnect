@@ -3,12 +3,13 @@ import { axiosInstance } from "./index";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 
-const { setAllUsers } = useSelector(state => state.user);
+// const { setAllUsers } = useSelector(state => state.user);
 
 export const getLoggedUser = async () => {
     try{
         const response = await axiosInstance.get('api/user/get-logged-user');
-        return response.data;
+        console.log("log1",response);
+        return response.data.data;
     }catch(error){
         return error;
     }
