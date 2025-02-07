@@ -36,8 +36,8 @@ router.get('/get-logged-user', authMiddleware, async (req, res) => {
 // fetching the data of logged in user except the current user
 router.get('/get-all-users', authMiddleware, async (req, res) => {
     try{
-        const allUsers = await User.find( { _id : {$ne :   req.user.userId } } );
-
+       // const allUsers = await User.find( { _id : {$ne :   req.user.userId } } );
+        const allUsers = await User.find({});
         if (!allUsers) {
             return res.status(404).json({
                 message: 'Users not found',
