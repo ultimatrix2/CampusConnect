@@ -20,6 +20,10 @@ const Navbar = () => {
     navigate('/'); 
   };
 
+  const handleChat = () => {
+    navigate('/chat');
+  }
+
   return (
     <nav className="navbar">
       <div className="navbar-left">
@@ -40,7 +44,7 @@ const Navbar = () => {
         {user ? (
           <>
             <button className="navbar-btn" onClick={handleDashboardClick}>Dashboard</button> 
-            <button className="navbar-btn">Chat</button> 
+            <button className="navbar-btn" onClick={handleChat}>Chat</button> 
             <button className="navbar-btn">Profile</button>
             <button className="navbar-btn logout-btn" onClick={handleLogout}> 
               <FaSignOutAlt size={25} />

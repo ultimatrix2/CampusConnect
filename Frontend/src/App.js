@@ -4,6 +4,8 @@ import { useSelector, useDispatch } from "react-redux";
 import Home from "./Components/Home.jsx";
 import Login from "./Components/Login.jsx";
 import { loginSuccess } from "./redux/userSlice";
+import Chat from "./Pages/Chat.jsx";
+import './Pages/chat.css'
 
 function App() {
   const user = useSelector((state) => state.user.currentUser);
@@ -25,6 +27,7 @@ function App() {
       <Routes> 
         <Route path="/" element={!user ? <Login /> : <Navigate to="/home" />} />
         <Route path="/home" element={user ? <Home /> : <Navigate to="/" />} />
+        <Route path="/chat" element={user ? <Chat /> : <Navigate to="/" />} />
       </Routes>
     </Router>
   );
