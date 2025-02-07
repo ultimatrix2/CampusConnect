@@ -1,154 +1,120 @@
-/* Base Styles */
+/* Navbar Base Styles */
 .navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 30px;
-     background-color: #292c2f;
-    color: white;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 1000;
-    font-style: oblique;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background-color: #292c2f;
+  color: white;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Left Section */
+.navbar-left {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  width: 70px;
+  height: 60px;
+  margin-right: 10px;
+  border-radius: 50%;
+  object-fit: fill;
+  transition: transform 0.3s ease;
+}
+
+.logo:hover {
+  transform: rotate(360deg);
+}
+
+.website-name {
+  font-size: 26px;
+  font-weight: 700;
+  font-family: 'Lobster', cursive;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.navbar-right {
+  display: flex;
+  gap: 60px;
+  margin-right: 100px;
+  margin-left: 200px;
+}
+
+.navbar-btn {
+  background-color: transparent;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 30px;
+  transition: all 0.3s ease;
+  font-family: 'Poppins', sans-serif;
+}
+
+.navbar-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(255, 117, 140, 0.5);
+}
+
+.logout-btn {
+  color: #d32f2f;
+}
+
+.logout-btn:hover {
+  color: #ff4c4c;
+}
+
+
+.menu-btn {
+  display: none;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 25px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.menu-btn:hover {
+  transform: scale(1.2);
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .menu-btn {
+      display: block;
   }
-  
-  .navbar-left {
-    display: flex;
-    align-items: center;
-  }
-  
-  .logo {
-    width: 70px;
-    height: 60px;
-    margin-right: 10px;
-    border-radius: 50%;
-    object-fit: fill;
-    transition: transform 0.3s ease;
-  }
-  
-  .logo:hover {
-    transform: rotate(360deg);
-  }
-  
-  .website-name {
-    font-size: 26px;
-    font-weight: 700;
-    font-family: 'Lobster', cursive;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-  
-  .navbar-center {
-    flex-grow: 1;
-    display: flex;
-    justify-content: center;
-  }
-  
-  .search-bar {
-    width: 50%;
-    padding: 10px 15px;
-    font-size: 16px;
-    border-radius: 25px;
-    border: none;
-    outline: none;
-    transition: all 0.3s ease;
-  }
-  
-  .search-bar:focus {
-    width: 65%;
-    border: 2px solid #4caf50;
-    box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
-  }
-  
-  .search-btn {
-    background-color: transparent;
-    border: none;
-    color: white; 
-    cursor: pointer;
-    margin-left: 0px;
-  }
-  
+
   .navbar-right {
-    display: flex;
-    gap: 10px;
-    margin-left: -100px;
-    margin-right: 50px;
+      display: none;
+      flex-direction: column;
+      position: absolute;
+      top: 70px;
+      right: 0;
+      width: 100%;
+      background-color: #292c2f;
+      padding: 20px;
+      box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+      text-align: center;
   }
-  
+
+  .navbar-right.open {
+      display: flex;
+  }
+
   .navbar-btn {
-    background-color: transparent;
-    color: white;
-    border: none;
-    padding: 10px 40px;
-    font-size: 16px;
-    cursor: pointer;
-    border-radius: 30px;
-    transition: all 0.3s ease;
-    font-style: oblique;
-    font-family: 'Poppins', sans-serif;
+      width: 100%;
+      padding: 12px;
+      font-size: 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   }
-  
-  .navbar-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 15px rgba(255, 117, 140, 0.5);
-  }
-  
-  .logout-btn {
-    color: #5612f4;
-  }
-  
-  .logout-btn:hover {
-    color: #d32f2f;
-    text-decoration: underline;
-  }
-  
-  /* Responsive Design */
-  @media screen and (max-width: 768px) {
-    .navbar {
-        flex-direction: column;
-        padding: 10px;
-        text-align: center;
-    }
-  
-    .navbar-left {
-        flex-direction: column;
-        align-items: center;
-    }
-  
-    .logo {
-        width: 50px;
-        height: 50px;
-        margin-bottom: 5px;
-    }
-  
-    .website-name {
-        font-size: 20px;
-    }
-  
-    .navbar-center {
-        width: 100%;
-        margin-top: 10px;
-    }
-  
-    .search-bar {
-        width: 80%;
-        font-size: 14px;
-    }
-  
-    .navbar-right {
-        flex-direction: column;
-        align-items: center;
-        width: 100%;
-        margin-top: 10px;
-    }
-  
-    .navbar-btn {
-        width: 90%;
-        padding: 10px;
-        font-size: 16px;
-    }
-  }
-  
+}
