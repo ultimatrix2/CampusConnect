@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const chatSchema = new mongoose.Schema({
     members : {
         type : [
-            { type : mongoose.Schema.Types.ObjectId , ref : "/test/users"}
+            { type : mongoose.Schema.Types.ObjectId , ref : "users"}
         ]
     },
     lastMessage : {
@@ -13,7 +13,7 @@ const chatSchema = new mongoose.Schema({
         type : Number,
         default : 0
     }
-}, {timeStamps : true }) ;
+}, {timestamps : true }) ;
 
 
 module.exports = mongoose.model( "chats", chatSchema ) ;

@@ -2,6 +2,7 @@ const router = require('express').Router();
 const User = require('./../models/User');
 const axios = require("axios");
 const authMiddleware = require('./../middleware/authMiddleware');
+const cheerio = require('cheerio');
 // const userRouter = require('./controllers/userController');
 // const { loadEnvFile } = require('process');
 
@@ -103,16 +104,68 @@ router.put("/update-profile", authMiddleware, async (req, res) => {
     }
 });
 
+
+router.post("/userLeetcode", async (req,res,next)=>{
+
+    console.log(await fetchLeetCodeRating(req.body.leetcodeUsername));
+
+    res.status(200).json({message: "Ok"});
+
+});
+
+// Function to fetch LeetCode rating using web scraping
+const fetchLeetCodeRating = async (username) => {
+    try {
+
+        const requestOptions = {
+            method: "GET",
+            redirect: "follow"
+          };
+          
+       const r = await fetch(`https://leetcode.com/u/${username}`, requestOptions);
+        const response = await r.text();
+        const $ = await cheerio.load(response);
+
+        console.log(response)
+
+
+        // Extract rating (Update selector if LeetCode changes UI)
+
+        let ratingText = "Not found";
+        $('.text-label-3').each((index, element) => {
+            if ($(element).text().trim() === "Contest Rating") {
+                ratingText = $(element).next().text().trim();
+            }
+        });
+
+        console.log(ratingText)
+
+        return ratingText ? parseInt(ratingText) : 0;
+    } catch (error) {
+        console.error("Failed to fetch LeetCode rating:", error.message);
+        return 0; // Return 0 if fetch fails
+    }
+};
+
+// it's working and fetching the leetcode data
+
 async function getLeetcodeGraphqlResponse(query, variables) {
     let data = JSON.stringify({
-        query: query, variables: variables
+        query: query, 
+        variables: variables
     });
-
+    
     let config = {
-        method: 'post', url: 'https://leetcode.com/graphql/', headers: {'Content-Type': 'application/json',}, data: data
+        method: 'post',
+        url: 'https://leetcode.com/graphql/',
+        headers: {
+            'Content-Type': 'application/json',
+            'Referer': 'https://leetcode.com/'  // Add Referer header
+        },
+        data: data
     };
-
-    return axios(config);
+    
+    return axios(config);    
 }
 
 router.post("/leetcode" , async (req, res, next) => { 
@@ -124,7 +177,7 @@ router.post("/leetcode" , async (req, res, next) => {
 
         console.log(username);
 
-        const query = `
+        let query = `
             query userPublicProfile($username: String!, $year: Int ) {
               matchedUser(username: $username) {
                 profile {
@@ -146,7 +199,7 @@ router.post("/leetcode" , async (req, res, next) => {
               }
             }
         `;
-        const response = await getLeetcodeGraphqlResponse(query, {username});
+        let response = await getLeetcodeGraphqlResponse(query, {username});
     
         if (!response.data.data.matchedUser) {
             res.status(400).json({
@@ -160,10 +213,21 @@ router.post("/leetcode" , async (req, res, next) => {
         const languagesUsed = response.data.data.matchedUser?.languageProblemCount.map(language => language.languageName) || [];
         const submissionCount = response.data.data.matchedUser?.submitStatsGlobal?.acSubmissionNum || [];
     
+        query = `query userContestRankingInfo($username: String!) {
+                       userContestRanking(username: $username) {
+                                rating
+                            }
+                        }
+                                                                              `
+        response = await getLeetcodeGraphqlResponse(query, {username});
+
+        console.log(response.data.data);
+        
+
         res.status(200).json({
             status: "success", data: {
                 platformName:"LEETCODE",
-                profileLink: `https://leetcode.com/${username}/`, handler, rank, streak, languagesUsed, submissionCount
+                profileLink: `https://leetcode.com/${username}/`, handler, rank, streak, languagesUsed, submissionCount, rating: response.data.data?.userContestRanking?.rating || "NA"
             }
         })}
     );
