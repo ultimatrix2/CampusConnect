@@ -5,8 +5,9 @@ import { IoIosSchool } from "react-icons/io";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useDispatch } from "react-redux";
-import { loginSuccess } from "../redux/userSlice"; 
+import { loginSuccess, setUser } from "../redux/userSlice"; 
 import './Login.css'
+import { getLoggedUser } from "../chatApiCalls/users";
 
 function Login() {
   const navigate = useNavigate();
@@ -67,7 +68,6 @@ function Login() {
       });
 
       const data = await response.json();
-      console.log("Response Data:", data);
 
       if (response.ok) {
         toast.success("Registration Successful! Redirecting...");
@@ -97,9 +97,15 @@ function Login() {
 
       if (response.ok) {
         toast.success("Login Successful! Redirecting...");
+        
         localStorage.setItem("token", data.token);
-        setTimeout(() => navigate("/home"), 2000);
+
         dispatch(loginSuccess(data)); 
+        const userData=await getLoggedUser(dispatch);
+        console.log("check login",userData);
+        dispatch(setUser(userData));
+
+        setTimeout(() => navigate("/home"), 2000);
       } else {
         toast.error(`Error: ${data.message || "Login failed"}`);
       }

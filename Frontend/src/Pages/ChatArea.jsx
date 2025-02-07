@@ -7,7 +7,8 @@ import './chat.css'
 
 function ChatArea() {
     const dispatch = useDispatch();
-    const { selectedChat, user } = useSelector(state => state.userReducer);
+    const { selectedChat, user } = useSelector(state => state.user);
+    console.log("selectedChat",selectedChat)
     const selectedUser = selectedChat.members.find(u => u._id !== user._id);
     const [message, setMessage] = useState('');
     const [allMessage, setAllMessage] = useState([]);
@@ -61,9 +62,9 @@ function ChatArea() {
     }, [selectedChat])
 
     return <>
-        {!selectedChat && <div class="app-chat-area">
+        {selectedChat && <div class="app-chat-area">
             <div className="app-chat-area-header">
-                ( selectedUser.name )
+                { selectedUser }
             </div>
             <div className="main-chat-area">
                 CHAT AREA
@@ -77,8 +78,9 @@ function ChatArea() {
                 />
                 <button 
                     className="fa fa-paper-plane send-message-btn" 
-                    aria-hidden="true">
-                    onClick={ sendMessage }
+                    aria-hidden="true"
+                    onClick={ ()=>sendMessage() } >
+                        Send
                 </button>
             </div>
         </div>}

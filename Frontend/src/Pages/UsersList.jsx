@@ -15,17 +15,17 @@ function UsersList({ searchKey }) {
         // console.log("currentUser",currentUser)
         try {
             dispatch(showLoader());
-            response = await createNewChat({ searchedUserId});
-            // console.log("duhusgcuhd")
-            console.log(response)
+            const members=[currentUser._id,searchedUserId]
+            response = await createNewChat(members);
             dispatch(hideLoader());
-            if (response.success) {
+            // if (response.success) {
                 toast.success(response?.message);
-                const newChat = response.data;
+                const newChat = response;
                 const updatedChat = [...allChats, newChat];
+                console.log("updatedChat",updatedChat)
                 dispatch(setAllChats(updatedChat));
                 dispatch(setSelectedChat(newChat));
-            }
+            // }
         } catch (error) {
             toast.error(response.message);
             dispatch(hideLoader());
