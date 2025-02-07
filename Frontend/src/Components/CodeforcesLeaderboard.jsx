@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import "./Sidebar.css";
+import { Link } from "react-router-dom";
 
 const CodeforcesLeaderboard = ({ selectedCourse }) => {
 
@@ -13,9 +14,7 @@ const CodeforcesLeaderboard = ({ selectedCourse }) => {
   useEffect(() => {
     const fetchRatings = async () => {
       try {
-        const token = localStorage.getItem("token");
-
-        
+        const token = localStorage.getItem("token");  
         const response = await fetch("http://localhost:5001/api/user/get-all-users", {
             method: "GET",
             headers: {
@@ -73,14 +72,13 @@ const CodeforcesLeaderboard = ({ selectedCourse }) => {
               <tr key={user._id}>
                 <td id="rank">{index + 1}</td>
                 <td>
-                  <a
-                    href={`https://codeforces.com/profile/${user.codeforcesUsername}`}
-                    target="_blank"
+                  <Link
+                  to={`/u/${user._id}`}
                     rel="noopener noreferrer"
                     className="leaderboard-link"
                   >
                     {user.name}
-                  </a>
+                  </Link>
                 </td>
                 <td>{user.branch}</td>
                 <td>{user.codeforcesRating || "NA"}</td>
