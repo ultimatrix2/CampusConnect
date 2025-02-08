@@ -7,9 +7,6 @@ export const fetchAllUsers = createAsyncThunk(
       const token = localStorage.getItem('token');
         const response = await axios.get('http://localhost:5001/api/user/get-all-users', {headers: {Authorization: `Bearer ${token}`}});
         return response.data.data;
-        
-        // setAllUsers(response.data.data);
-        // return response.data;
     }catch(error){
         return error;
     }
@@ -31,9 +28,8 @@ const userSlice = createSlice({
       console.log(action.payload)
       localStorage.setItem("user", JSON.stringify(action.payload));
     },
-    setUser:(state,action)=>{
-      state.user=action.payload;
-    },
+    setUser:(state,action)=>{ state.user=action.payload; },
+    setAllUsers: (state, action) => { state.allUsers = action.payload; },
     setAllChats: (state, action) => { state.allChats = action.payload; },
     setSelectedChat: (state, action) => { state.selectedChat = action.payload; },
     logout: (state) => { 
@@ -52,5 +48,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { loginSuccess, logout,setUser, setAllChats, setSelectedChat } = userSlice.actions;
+export const { loginSuccess, logout,setUser, setAllUsers, setAllChats, setSelectedChat } = userSlice.actions;
 export default userSlice.reducer;

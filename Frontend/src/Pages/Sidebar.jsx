@@ -9,7 +9,6 @@ import { fetchAllUsers } from '../redux/userSlice'
 export default function Sidebar({search}) {
     
     const [searchKey, setSearchKey] = useState('');
-    // const { allUsers } = useSelector(state => state.user);
     const dispatch = useDispatch();
     const allUsers = useSelector((state) => state.user.allUsers);
   
