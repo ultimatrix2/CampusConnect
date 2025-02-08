@@ -38,7 +38,7 @@ const Navbar = ({ onPlatformChange }) => {
 
       {/* Toggle Button for Switching Platform */}
       <button className="platform-btn" onClick={handlePlatformChange}>
-      {selectedPlatform === "leetcode" ? "leetCode 🔵" : "codeforces ⚫"}
+      {selectedPlatform === "leetcode" ? "LeetCode 🔵" : "Codeforces 🟤"}
       </button>
 
       {/* Menu Button for Mobile View */}
