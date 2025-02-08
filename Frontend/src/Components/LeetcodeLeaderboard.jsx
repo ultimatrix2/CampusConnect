@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import "./Sidebar.css";
 import { Link } from "react-router-dom";
 
-const CodeforcesLeaderboard = ({ selectedCourse, selectedYear }) => {
+const LeetcodeLeaderboard = ({ selectedCourse, selectedYear }) => {
   console.log("Selected Filters:", selectedCourse, selectedYear);
 
   const [users, setUsers] = useState([]);
@@ -65,11 +65,11 @@ const CodeforcesLeaderboard = ({ selectedCourse, selectedYear }) => {
         </thead>
         <tbody>
           {filteredUsers
-            .sort((a, b) => b.codeforcesRating - a.codeforcesRating)
+            .sort((a, b) => b.leetcodeRating - a.leetcodeRating)
             .map((user, index) => (
               <tr key={user._id}>
                 <td id="rank">{index + 1}</td>
-                <td id="codeforces_user">
+                <td >
                   <Link
                   to={`/u/${user._id}`}
                     rel="noopener noreferrer"
@@ -80,7 +80,7 @@ const CodeforcesLeaderboard = ({ selectedCourse, selectedYear }) => {
                 </td>
                 <td>{user.branch}</td>
                 <td>{user.year || "NA"}</td>
-                <td>{user.codeforcesRating || "NA"}</td>
+                <td>{user.leetcodeRating || "NA"}</td>
               </tr>
             ))}
         </tbody>
@@ -89,4 +89,4 @@ const CodeforcesLeaderboard = ({ selectedCourse, selectedYear }) => {
   );
 };
 
-export default CodeforcesLeaderboard;
+export default LeetcodeLeaderboard;
