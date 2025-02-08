@@ -112,68 +112,6 @@ router.put("/update-profile", authMiddleware, async (req, res) => {
 
 
 
-// router.post("/userLeetcode", async (req,res,next)=>{
-
-//     console.log(await fetchLeetCodeRating(req.body.leetcodeUsername));
-
-//     res.status(200).json({message: "Ok"});
-
-// });
-
-// // Function to fetch LeetCode rating using web scraping
-// const fetchLeetCodeRating = async (username) => {
-//     try {
-
-//         const requestOptions = {
-//             method: "GET",
-//             redirect: "follow"
-//           };
-          
-//        const r = await fetch(`https://leetcode.com/u/${username}`, requestOptions);
-//         const response = await r.text();
-//         const $ = await cheerio.load(response);
-
-//         console.log(response)
-
-
-//         // Extract rating (Update selector if LeetCode changes UI)
-
-//         let ratingText = "Not found";
-//         $('.text-label-3').each((index, element) => {
-//             if ($(element).text().trim() === "Contest Rating") {
-//                 ratingText = $(element).next().text().trim();
-//             }
-//         });
-
-//         console.log(ratingText)
-
-//         return ratingText ? parseInt(ratingText) : 0;
-//     } catch (error) {
-//         console.error("Failed to fetch LeetCode rating:", error.message);
-//         return 0; // Return 0 if fetch fails
-//     }
-// };
-
-// it's working and fetching the leetcode data
-
-// async function getLeetcodeGraphqlResponse(query, variables) {
-//     let data = JSON.stringify({
-//         query: query, 
-//         variables: variables
-//     });
-    
-//     let config = {
-//         method: 'post',
-//         url: 'https://leetcode.com/graphql/',
-//         headers: {
-//             'Content-Type': 'application/json',
-//             'Referer': 'https://leetcode.com/'  // Add Referer header
-//         },
-//         data: data
-//     };
-    
-//     return axios(config);    
-// }
 
 router.post("/leetcode" , async (req, res, next) => { 
         //we will be using graphql to retrieve user details from leetcode
@@ -246,8 +184,6 @@ router.post("/leetcode" , async (req, res, next) => {
     );
 
 
-
-// module.exports = router;
 
 async function getLeetcodeGraphqlResponse(query, variables) {
     let data = JSON.stringify({ query, variables });
