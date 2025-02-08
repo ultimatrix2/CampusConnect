@@ -16,7 +16,6 @@ const UserProfileCard = () => {
 
 
   useEffect(() => {
-    // Fetch user data from backend API
     const fetchUserData = async () => {
       try {
 

@@ -9,7 +9,6 @@ const Footer = () => {
         <div className="footer-left">
           <span className="footer-logo">Campus Connect</span>
         </div>
-        
         <div className="footer-center">
           <p className="footer-quote">Connecting minds, creating the future.</p>
           <p className="footer-quote">Stay informed, engage, and grow together with your campus community.</p>
