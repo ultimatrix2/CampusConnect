@@ -7,20 +7,16 @@ import './chat.css';
 
 function UsersList({ searchKey }) {
     const { allUsers, allChats, user: currentUser, selectedChat } = useSelector(state => state.user);
-    console.log('current users', currentUser);
     const dispatch = useDispatch();
     const startNewChat = async (searchedUserId) => {
         let response = null;
-        // console.log("currentUser",currentUser)
         try {
             const members=[currentUser._id,searchedUserId]
             response = await createNewChat(members);
             // if (response.success) {
                 toast.success(response?.message);
                 const newChat = response;
-
                 const updatedChat = [...allChats, newChat];
-                console.log("updatedChat",updatedChat)
                 dispatch(setAllChats(updatedChat));
                 dispatch(setSelectedChat(newChat));
             // }

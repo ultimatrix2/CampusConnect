@@ -37,8 +37,6 @@ function OtherProfile() {
             <h1 >Coding Profile</h1>    
         <div className="profile-container">
             
-
-            {/* LeetCode Section */}
             {leetcodeData ? (
                 <div className="platform-card leetcode">
                     <h2>LeetCode Profile</h2>
@@ -62,7 +60,6 @@ function OtherProfile() {
                 <p>LeetCode data not available.</p>
             )}
 
-            {/* Codeforces Section */}
             {codeforcesData ? (
                 <div className="platform-card codeforces">
                     <h2>Codeforces Profile</h2>
