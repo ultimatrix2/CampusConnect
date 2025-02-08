@@ -200,19 +200,16 @@
     width: 5px;
   }
   
-  /* Track */
   .main-chat-area::-webkit-scrollbar-track {
     box-shadow: inset 0 0 2px grey; 
     border-radius: 10px;
   }
   
-  /* Handle */
   .main-chat-area::-webkit-scrollbar-thumb {
     background: #e74c3c; 
     border-radius: 10px;
   }
   
-  /* Handle on hover */
   .main-chat-area::-webkit-scrollbar-thumb:hover {
     background: #e74c3c; 
   }

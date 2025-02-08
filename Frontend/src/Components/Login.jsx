@@ -119,7 +119,6 @@ function Login() {
     <div className={`container ${isSignInActive ? "" : "right-panel-active"}`} id="container">
       <ToastContainer position="top-right" autoClose={2000} />
       
-      {/* Sign Up Form */}
       <div className={`form-container sign-up-container ${isSignInActive ? "hidden" : ""}`}>
         <form onSubmit={handleRegister}>
           <h1>Create Account</h1>
@@ -163,7 +162,6 @@ function Login() {
         </button>
       </div>
 
-      {/* Sign In Form */}
       <div className={`form-container sign-in-container ${isSignInActive ? "" : "hidden"}`}>
         <form onSubmit={handleLogin}>
           <h1>Login</h1>
@@ -178,7 +176,6 @@ function Login() {
         </button>
       </div>
 
-      {/* Overlay Section */}
       <div className="overlay-container">
         <div className="overlay">
           <div className="overlay-panel overlay-left">

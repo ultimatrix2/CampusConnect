@@ -12,7 +12,7 @@ const Navbar = ({ onPlatformChange }) => {
   const user = useSelector((state) => state.user.currentUser);
   
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedPlatform, setSelectedPlatform] = useState("codeforces"); // Default: Codeforces
+  const [selectedPlatform, setSelectedPlatform] = useState("codeforces"); 
 
   const handleLogout = () => {
     dispatch(logout());
@@ -26,7 +26,7 @@ const Navbar = ({ onPlatformChange }) => {
   const handlePlatformChange = () => {
     const newPlatform = selectedPlatform === "leetcode" ? "codeforces" : "leetcode";
     setSelectedPlatform(newPlatform);
-    onPlatformChange(newPlatform); // Notify Sidebar component
+    onPlatformChange(newPlatform); 
   };
 
   return (
