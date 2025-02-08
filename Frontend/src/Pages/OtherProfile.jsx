@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import "./OtherProfile.css"; // Import your CSS file
+import "./OtherProfile.css"; 
 
 function OtherProfile() {
     const { id } = useParams();
@@ -21,7 +21,7 @@ function OtherProfile() {
                 if (!response.ok) throw new Error("Failed to fetch data");
 
                 const data = await response.json();
-                setter(data.data || null); // Ensure fallback for missing data
+                setter(data.data || null); 
             } catch (error) {
                 console.error("Error fetching data:", error);
                 setter(null);
@@ -33,8 +33,10 @@ function OtherProfile() {
     }, [id]);
 
     return (
+        <div>
+            <h1 >Coding Profile</h1>    
         <div className="profile-container">
-            <h1>Competitive Programming Profile</h1>
+            
 
             {/* LeetCode Section */}
             {leetcodeData ? (
@@ -82,6 +84,7 @@ function OtherProfile() {
             ) : (
                 <p>Codeforces data not available.</p>
             )}
+        </div>
         </div>
     );
 }
