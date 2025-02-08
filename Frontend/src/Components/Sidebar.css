@@ -6,7 +6,7 @@
   height: 100vh; 
   background-color: #2c3e50; 
   color: white;
-  padding: 10px; /* Reduced padding */
+  padding: 10px;
   z-index: 999; 
   overflow-y: auto; 
   display: flex;
@@ -19,10 +19,10 @@
     margin-top: 80px;
 }
 .sidebar h2 {
-  font-size: 20px; /* Reduced size */
+  font-size: 20px; 
   font-family: 'Lobster', cursive;
   text-transform: uppercase;
-  margin-bottom: 15px; /* Reduced margin */
+  margin-bottom: 15px; 
   text-align: center;
 }
 
@@ -31,14 +31,12 @@
   padding: 0;
   margin-top: 4px;
   display: flex;
-  flex-wrap: wrap; /* Allows items to fit in one column */
+  flex-wrap: wrap; 
   justify-content: center;
 }
-/* Highlight selected course or year */
-/* Highlight the selected year */
-/* Style for selected item */
+
 .sidebar ul li.selected {
-  background-color: rgba(255, 117, 140, 0.8) !important; /* Highlighted color */
+  background-color: rgba(255, 117, 140, 0.8) !important; 
   color: white;
   font-weight: bold;
   transform: scale(1.05);
@@ -46,19 +44,17 @@
   border-radius: 20px;
 }
 
-
-
 .sidebar ul li {
-  padding: 8px 15px; /* Reduced padding */
-  font-size: 16px; /* Adjusted font size */
+  padding: 8px 15px; 
+  font-size: 16px; 
   cursor: pointer;
   transition: all 0.3s ease;
-  margin: 5px; /* Adjusted margin for better spacing */
-  border-radius: 20px; /* Smoother look */
+  margin: 5px; 
+  border-radius: 20px; 
   font-style: oblique;
   font-family: 'Poppins', sans-serif;
   text-align: center;
-  background-color: rgba(255, 255, 255, 0.2); /* Light background */
+  background-color: rgba(255, 255, 255, 0.2); 
 }
 
 .sidebar ul li:hover {
@@ -67,7 +63,7 @@
   background-color: rgba(255, 255, 255, 0.3);
 }
 
-/* Ensure leaderboard fits properly */
+/* leaderboard css */
 .main-content {
   margin-left: 240px; 
   transition: margin-left 0.3s ease; 
@@ -76,24 +72,29 @@
   overflow-y: auto;
 }
 
-/* Leaderboard styles */
 .leaderboard-container {
   position: fixed;
-  top: 80px; 
-  left: 220px; 
-  width: calc(100% - 220px); 
+  top: 100px; 
+  left: 220px;
+  width: calc(100% - 220px);
   z-index: 1000; 
   padding: 10px 0;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  max-height: calc(100vh - 200px); 
+  overflow-y: auto; 
+  background-color: white; 
 }
-a{
-    text-decoration: none;
-}
+
 .leaderboard-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 18px; /* Slightly smaller */
-  position: sticky;
+  font-size: 18px;
+}
+.leaderboard-table thead {
+  position: sticky; 
+  top: 0px;
+  background-color: #2c3e50;
+  z-index: 999; 
 }
 
 .leaderboard-table th, .leaderboard-table td {
@@ -105,8 +106,7 @@ a{
   background-color: #2c3e50;
   color: white;
 }
-
 .leaderboard-table tbody tr:hover {
-  background-color: rgba(44, 62, 80, 0.1); 
+  background-color: rgba(44, 62, 80, 0.1);
   transition: background-color 0.3s ease;
 }

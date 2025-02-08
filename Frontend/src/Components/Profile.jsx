@@ -14,7 +14,6 @@ const UserProfileCard = () => {
     leetcodeId: "",
   });
 
-//   const years = ["First Year", "Second Year", "Third Year", "Fourth Year"];
 
   useEffect(() => {
     // Fetch user data from backend API
@@ -26,7 +25,7 @@ const UserProfileCard = () => {
           method: "GET",
           headers: {
               "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`  // Include the token in Authorization header
+              "Authorization": `Bearer ${token}`  
           },
       });
 
@@ -72,7 +71,7 @@ const UserProfileCard = () => {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`  // Include the token in Authorization header
+            "Authorization": `Bearer ${token}`  
         },
         body: JSON.stringify({
             codeforcesUsername: userData.codeforcesId,
@@ -87,7 +86,7 @@ const UserProfileCard = () => {
       method: "PUT",
       headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`  // Include the token in Authorization header
+          "Authorization": `Bearer ${token}`  
       },
       body: JSON.stringify({
         leetcodeUsername: userData.leetcodeId,
@@ -103,25 +102,21 @@ const UserProfileCard = () => {
     <div className="card">
       <h2 className="card-title">User Profile</h2>
 
-      {/* Username (Read-only) */}
       <div className="form-group">
         <label>Username</label>
         <input type="text" value={userData.username} disabled className="input-field disabled" />
       </div>
-
-      {/* Email (Read-only) */}
       <div className="form-group">
         <label>Email</label>
         <input type="text" value={userData.email} disabled className="input-field disabled" />
       </div>
 
-      {/* Branch (Read-only) */}
+    
       <div className="form-group">
         <label>Branch</label>
         <input type="text" value={userData.branch} disabled className="input-field disabled" />
       </div>
 
-      {/* Year (Dropdown) */}
       <div className="form-group">
         <label>Year</label>
         <select name="year" required value={userData.year} onChange={handleChange} className="input-field">
@@ -134,19 +129,17 @@ const UserProfileCard = () => {
        
       </div>
 
-      {/* Codeforces ID (User Input) */}
       <div className="form-group">
         <label>Codeforces ID</label>
         <input type="text" name="codeforcesId" value={userData.codeforcesId} onChange={handleChange} className="input-field" />
       </div>
 
-      {/* LeetCode ID (User Input) */}
       <div className="form-group">
         <label>LeetCode ID</label>
         <input type="text" name="leetcodeId" value={userData.leetcodeId} onChange={handleChange} className="input-field" />
       </div>
 
-      {/* Submit Button */}
+
       <div>{message}</div>
       <button onClick={handleSubmit} className="submit-button">
         Submit
