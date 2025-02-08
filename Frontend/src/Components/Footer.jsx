@@ -18,8 +18,8 @@ const Footer = () => {
         <div className="footer-right">
           <ul className="social-links">
             <li><a href="https://www.linkedin.com/" className="social-icon" target="_blank" rel="noopener noreferrer"><FaLinkedin size={25} /></a></li>
-            <li><a href="mailto:contact@campusconnect.com" className="social-icon" target="_blank" rel="noopener noreferrer"><FaEnvelope size={25} /></a></li>
-            <li><a href="https://github.com" className="social-icon" target="_blank" rel="noopener noreferrer"><FaGithub size={25} /></a></li>
+            <li><a href="mailto:anshika.2024ca018@mnnit.ac.in" className="social-icon" target="_blank" rel="noopener noreferrer"><FaEnvelope size={25} /></a></li>
+            <li><a href="https://github.com/syntax-squad-DevJam-2k25/CampusConnect" className="social-icon" target="_blank" rel="noopener noreferrer"><FaGithub size={25} /></a></li>
           </ul>
         </div>
       </div>
