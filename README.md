@@ -21,7 +21,20 @@ profiles of students,
     - Nodejs
     - Expressjs
     - MongoDB
+    - GraphQL
+## Screenshots :
 
+* Coding Portfolios
+  
+  ![profile](https://github.com/user-attachments/assets/efd428c0-29b9-41de-9d7d-0a8fb9ec67ae)
+
+* Dashboard
+
+ ![home](https://github.com/user-attachments/assets/d5d9df33-a731-4d0b-a9dd-49c5f528e560)
+
+* Chat 
+
+  ![chat](https://github.com/user-attachments/assets/742830c1-5c22-49ae-a674-35dba5d6cacf)
 
 ## Contributors:
 
@@ -32,6 +45,12 @@ Team Name: syntax_squad
 * [Mayank Agrawal](https://github.com/amayank18)
 * [Anshika Kesari](https://github.com/02-Anshika)
 
+## Future Scope : 
+* Integrate WebRTC-based real-time video calling for seamless peer-to-peer communication.
+
+*  interactive heatmaps to visualize user activity and skill progression.
+
+* Develop a recommendation system to suggest content and connections based on profile domains like ML, DSA, and Web Development.
 
 
 ### Made at:
