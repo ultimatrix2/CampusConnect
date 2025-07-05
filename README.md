@@ -33,6 +33,12 @@ Team Name: syntax_squad
 * [Mayank Agrawal](https://github.com/amayank18)
 * [Anshika Kesari](https://github.com/02-Anshika)
 
+## Future Scope : 
+* Integrate WebRTC-based real-time video calling for seamless peer-to-peer communication.
+
+*  interactive heatmaps to visualize user activity and skill progression.
+
+* Develop a recommendation system to suggest content and connections based on profile domains like ML, DSA, and Web Development.
 
 
 ### Made at:
