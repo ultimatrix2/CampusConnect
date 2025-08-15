@@ -3,15 +3,29 @@ import { useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./OtherProfile.css"; 
+import LoadingPage from "../Components/LoadingPage"; // ✅ Import loader
 
 function OtherProfile() {
     const { id } = useParams();
     const [leetcodeData, setLeetcodeData] = useState(null);
     const [codeforcesData, setCodeforcesData] = useState(null);
+     const [loading, setLoading] = useState(true); // ✅ loader state
 
     useEffect(() => {
+
+        let completedRequests = 0;
+
+        const checkIfDone = () => {
+            completedRequests += 1;
+            if (completedRequests === 2) {
+                setLoading(false); // ✅ Hide loader after both fetches finish
+            }
+        };
+
         const fetchData = async (url, setter, platform) => {
             try {
+
+                
                 const response = await fetch(url, {
                     method: "POST",
                     headers: {
@@ -29,12 +43,18 @@ function OtherProfile() {
                 console.error(`Error fetching ${platform} data:`, error);
                 setter(null);
                 toast.error(`Error loading ${platform} data. Try again later.`);  
+            }finally {
+                checkIfDone(); // ✅ Count completed request
             }
         };
 
         fetchData("http://localhost:5001/api/user/leetcode", setLeetcodeData, "LeetCode");
         fetchData("http://localhost:5001/api/codeforces/getCodeforcesData", setCodeforcesData, "Codeforces");
     }, [id]);
+
+        if (loading) {
+        return <LoadingPage />; // ✅ Show loader until both APIs finish
+    }
 
     return (
         <div>
