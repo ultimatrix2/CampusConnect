@@ -4,7 +4,7 @@ const messageSchema = new mongoose.Schema(
   {
     sender: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "users",
+      ref: "User",
       required: true,
     },
 
@@ -44,7 +44,7 @@ const chatSchema = new mongoose.Schema(
     members: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "users",
+        ref: "User",
         required: true,
       },
     ],
@@ -56,6 +56,12 @@ const chatSchema = new mongoose.Schema(
     unreadMessageCount: {
       type: Number,
       default: 0,
+    },
+
+    clearedAt: {
+      type: Map,
+      of: Date,
+      default: {},
     },
   },
   { timestamps: true }

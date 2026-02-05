@@ -20,6 +20,7 @@
     "clsx": "^2.1.1",
     "cra-template": "1.2.0",
     "date-fns": "^4.1.0",
+    "emoji-picker-react": "^4.17.3",
     "icons": "^1.0.0",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.562.0",
