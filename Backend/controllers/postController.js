@@ -1,6 +1,6 @@
 const { getIO } = require("../config/socket");
 const Post = require("../models/Post");
-const { checkPostSafety } = require("../util/aiModeration");
+
 const uploadToCloudinary = require("../utils/cloudinaryUpload");
 
 
@@ -18,17 +18,19 @@ exports.createPost = async (req, res) => {
       });
     }
 
-    // 🔥 AI CHECK ONLY IF CONTENT EXISTS
+    // 🔥 BAD WORD FILTER (Local)
+    const badWords = ["abuse", "kill", "murder", "hate", "stupid", "idiot", "die", "death", "racist", "terrorist"]; // Add more as needed
     if (content) {
-      const verdict = await checkPostSafety(content);
-     if (verdict !== "SAFE") {
-  return res.status(400).json({
-    success: false,
-    code: "AI_BLOCK",
-    message: "This post contains offensive content. We cannot post it."
-  });
-}
+      const lowerContent = content.toLowerCase();
+      const hasBadWord = badWords.some(word => lowerContent.includes(word));
 
+      if (hasBadWord) {
+        return res.status(400).json({
+          success: false,
+          code: "CONTENT_BLOCK",
+          message: "This post contains restricted words. Please keep the community safe."
+        });
+      }
     }
 
     let media = null;
@@ -38,16 +40,16 @@ exports.createPost = async (req, res) => {
       let folder = "community/files";
       let mediaType = "file";
 
-    if (req.file.mimetype.startsWith("image")) {
-  folder = "community/images";
-  mediaType = "image";
-} else if (req.file.mimetype.startsWith("video")) {
-  folder = "community/videos";
-  mediaType = "video";
-} else {
-  folder = "community/docs";  // ⭐ use docs, not files
-  mediaType = "file";
-}
+      if (req.file.mimetype.startsWith("image")) {
+        folder = "community/images";
+        mediaType = "image";
+      } else if (req.file.mimetype.startsWith("video")) {
+        folder = "community/videos";
+        mediaType = "video";
+      } else {
+        folder = "community/docs";  // ⭐ use docs, not files
+        mediaType = "file";
+      }
 
       const result = await uploadToCloudinary(req.file, folder);
       console.log("☁️ Cloudinary result:", result);
@@ -59,15 +61,23 @@ exports.createPost = async (req, res) => {
       };
     }
 
-  
+
+    // 🏷️ Extract Tags
+    const tags = content ? (content.match(/#[a-zA-Z0-9_]+/g) || []).map(tag => tag.toLowerCase()) : [];
+
     const post = await Post.create({
       content: content?.trim() || "",
       media,
+      tags, // ✅ Save indexed tags
       postedBy: req.user._id,
       isAnonymous: isAnonymous === "true" || isAnonymous === true
     });
-    getIO().emit("postCreated", post);
-    res.status(201).json({ success: true, post });
+
+    const fullPost = await Post.findById(post._id).populate("postedBy", "name profileImage");
+
+    // ⚡ Real-time Update
+    getIO().emit("new-post", fullPost);
+    res.status(201).json({ success: true, post: fullPost });
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -83,26 +93,27 @@ exports.getAllPosts = async (req, res) => {
       .populate("postedBy", "name profileImage") // adjust fields as per User model
       .sort({ createdAt: -1 });
 
-          let totalLikes = 0;
+    let totalLikes = 0;
 
     const formattedPosts = posts.map((post) => {
       const likesCount = post.likes.length;
       totalLikes += likesCount;
       return {
-      _id: post._id,
-      content: post.content,
-      media: post.media,
-      isAnonymous: post.isAnonymous,
-      anonymousName: post.anonymousName,
-      likes: post.likes,
-      likesCount: post.likes.length,
-      repliesCount: post.repliesCount,
-      createdAt: post.createdAt,
+        _id: post._id,
+        content: post.content,
+        media: post.media,
+        isAnonymous: post.isAnonymous,
+        anonymousName: post.anonymousName,
+        likes: post.likes,
+        likesCount: post.likes.length,
+        repliesCount: post.repliesCount,
+        createdAt: post.createdAt,
+        isMine: post.postedBy?._id.toString() === req.user._id.toString(), // ✅ Check ownership
 
-      // 🔒 Hide identity if anonymous
-      postedBy: post.isAnonymous
-        ? { name: "Anonymous", profileImage: null }
-        : post.postedBy
+        // 🔒 Hide identity if anonymous
+        postedBy: post.isAnonymous
+          ? { name: "Anonymous", profileImage: null }
+          : post.postedBy
       };
     });
 
@@ -136,8 +147,8 @@ exports.deletePost = async (req, res) => {
     const userId = req.user._id;
     const post = await Post.findById(postId);
 
-     console.log("USER:", req.user);
-     console.log("POST ID:", req.params.postId);
+    console.log("USER:", req.user);
+    console.log("POST ID:", req.params.postId);
 
 
     if (!post) {
@@ -148,15 +159,15 @@ exports.deletePost = async (req, res) => {
     }
 
     // 🔐 OWNER CHECK
-   if (post.postedBy.toString() !== userId.toString()) {
-  return res.status(403).json({
-    success: false,
-    message: "You are not allowed to delete this post"
-  });
-}
+    if (post.postedBy.toString() !== userId.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not allowed to delete this post"
+      });
+    }
 
 
-   await Post.findByIdAndDelete(postId);
+    await Post.findByIdAndDelete(postId);
 
     return res.status(200).json({
       success: true,
@@ -213,6 +224,30 @@ exports.toggleLikePost = async (req, res) => {
       success: false,
       message: "Internal server error"
     });
+  }
+};
+
+
+// 📈 Get Trending Tags (Scalable Aggregation)
+exports.getTrendingTags = async (req, res) => {
+  try {
+    const tags = await Post.aggregate([
+      { $unwind: "$tags" }, // Deconstruct tags array
+      {
+        $group: {
+          _id: "$tags",
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { count: -1 } }, // Sort by most frequent
+      { $limit: 10 } // Top 10
+    ]);
+
+    const formattedTags = tags.map(t => ({ tag: t._id, count: t.count, label: t._id }));
+    res.status(200).json({ success: true, tags: formattedTags });
+  } catch (error) {
+    console.error("Trending Tags Error:", error);
+    res.status(500).json({ success: false, message: "Failed to fetch trends" });
   }
 };
 

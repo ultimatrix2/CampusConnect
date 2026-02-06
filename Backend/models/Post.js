@@ -15,8 +15,8 @@ async function cascadeDelete(post) {
         post.media.type === "image"
           ? "image"
           : post.media.type === "video"
-          ? "video"
-          : "raw",
+            ? "video"
+            : "raw",
     });
   }
 }
@@ -25,6 +25,19 @@ const postSchema = new mongoose.Schema(
     content: {
       type: String,
       trim: true
+    },
+
+    tags: {
+      type: [String],
+      index: true // 📈 Scalable indexing
+    },
+
+    linkPreview: {
+      url: String,
+      title: String,
+      description: String,
+      image: String,
+      domain: String
     },
 
     media: {

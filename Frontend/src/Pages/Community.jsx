@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
+
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { DashboardLayout } from "../Components/DashboardLayout";
-import { FaHeart, FaComment, FaShare, FaSmile, FaImage, FaVideo, FaTrash, FaPaperclip, FaFilePdf, FaFileWord, FaFileExcel, FaReply, FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { FaHeart, FaComment, FaShare, FaSmile, FaImage, FaVideo, FaTrash, FaPaperclip, FaFilePdf, FaFileWord, FaFileExcel, FaReply, FaChevronDown, FaChevronUp, FaBold, FaItalic, FaList, FaCode } from "react-icons/fa";
 import socket from "../socket";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -17,6 +18,20 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../Components/ui/alert-dialog";
+import { Skeleton } from "../Components/ui/skeleton";
+import { Input } from "../Components/ui/input";
+import { Button } from "../Components/ui/button";
+import { Search, Filter, Loader2, AlertCircle, RefreshCw } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { dracula } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import RatingBadge from '../Components/RatingBadge';
+
+
+
+
+
 
 const Community = () => {
   const navigate = useNavigate();
@@ -44,7 +59,16 @@ const Community = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [editingReply, setEditingReply] = useState(null);
+
   const [editReplyText, setEditReplyText] = useState("");
+
+  // Search & Filter
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState("latest"); // latest, oldest, popular
+  const [newPostsQueue, setNewPostsQueue] = useState([]); // ⚡ Real-time queue
+  const [trendingTags, setTrendingTags] = useState([]); // 📈 Backend Tags
+  const [linkPreview, setLinkPreview] = useState(null); // 🔗 URL Preview Data
+  const [isFetchingPreview, setIsFetchingPreview] = useState(false);
 
   // Alert Dialog State
   const [alertConfig, setAlertConfig] = useState({
@@ -55,16 +79,69 @@ const Community = () => {
   });
 
 
-  const filteredPosts = filter ? posts.filter(post => post.content && post.content.toLowerCase().includes(filter.toLowerCase())) : posts;
+  const filteredPosts = posts
+    .filter((post) => {
+      // 1. Tag Filter (existing)
+      if (filter && !post.content?.toLowerCase().includes(filter.toLowerCase())) return false;
+
+      // 2. Search Filter
+      if (searchTerm) {
+        const lowerSearch = searchTerm.toLowerCase();
+        const matchesContent = post.content?.toLowerCase().includes(lowerSearch);
+        const matchesAuthor = post.postedBy?.name?.toLowerCase().includes(lowerSearch);
+        return matchesContent || matchesAuthor;
+      }
+      return true;
+    })
+    .sort((a, b) => {
+      // 3. Sorting
+      if (sortBy === "popular") {
+        return (b.likes?.length || 0) - (a.likes?.length || 0);
+      } else if (sortBy === "oldest") {
+        return new Date(a.createdAt) - new Date(b.createdAt);
+      } else {
+        // Default: Latest
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      }
+    });
 
   const renderContent = (content) => {
-    if (!content) return null;
-    return content.split(' ').map((word, index) => {
-      if (word.startsWith('#')) {
-        return <span key={index} className="text-blue-400 font-semibold">{word}</span>;
-      }
-      return word + ' ';
-    });
+    return (
+      <ReactMarkdown
+        children={content}
+        remarkPlugins={[remarkGfm]}
+        components={{
+          code({ node, inline, className, children, ...props }) {
+            const match = /language-(\w+)/.exec(className || '');
+            return !inline && match ? (
+              <SyntaxHighlighter
+                style={dracula}
+                language={match[1]}
+                PreTag="div"
+                {...props}
+              >
+                {String(children).replace(/\n$/, '')}
+              </SyntaxHighlighter>
+            ) : (
+              <code className="bg-gray-800 rounded px-1 py-0.5 text-sm font-mono text-pink-400" {...props}>
+                {children}
+              </code>
+            );
+          },
+          // Explicit mapping for standard markdown elements
+          strong: ({ node, ...props }) => <strong className="font-bold text-white" {...props} />,
+          em: ({ node, ...props }) => <em className="italic text-gray-300" {...props} />,
+          ul: ({ node, ...props }) => <ul className="list-disc list-inside ml-4 space-y-1 text-gray-300" {...props} />,
+          ol: ({ node, ...props }) => <ol className="list-decimal list-inside ml-4 space-y-1 text-gray-300" {...props} />,
+          li: ({ node, ...props }) => <li className="pl-1" {...props} />,
+          a: ({ node, ...props }) => <a className="text-blue-400 hover:underline break-all" target="_blank" rel="noopener noreferrer" {...props} />,
+          blockquote: ({ node, ...props }) => <blockquote className="border-l-4 border-gray-500 pl-4 italic text-gray-400 my-2" {...props} />,
+          h1: ({ node, ...props }) => <h1 className="text-2xl font-bold text-white mt-4 mb-2" {...props} />,
+          h2: ({ node, ...props }) => <h2 className="text-xl font-bold text-white mt-3 mb-2" {...props} />,
+          h3: ({ node, ...props }) => <h3 className="text-lg font-bold text-white mt-2 mb-1" {...props} />,
+        }}
+      />
+    );
   };
 
   const getTagCount = (tag) => {
@@ -103,77 +180,7 @@ const Community = () => {
     });
   };
 
-  // ================= CREATE POST =================
-  const handlePost = async () => {
-    console.log("\n========= HANDLE POST CALLED =========");
-    console.log("📝 Content:", content);
-    console.log("📎 File object:", file);
 
-    if (!content && !file) {
-      toast.warning("Please write something or upload a file");
-      return;
-    }
-
-    setAlertConfig({
-      isOpen: true,
-      title: "Confirm Post",
-      description: "Once posted, you cannot edit this post. Are you sure you want to post?",
-      action: async () => {
-        const formData = new FormData();
-        formData.append("content", content);
-        formData.append("isAnonymous", isAnonymous);
-
-        if (file) {
-          console.log("📂 Appending file:", file.name, file.type, file.size);
-          formData.append("file", file);
-        }
-
-        // 🔥 VERY IMPORTANT DEBUG — see what is inside FormData
-        for (let pair of formData.entries()) {
-          console.log("📦 FormData:", pair[0], pair[1]);
-        }
-
-        try {
-          setLoading(true);
-          console.log("🚀 Sending request to backend...");
-
-          const response = await axios.post(
-            "http://localhost:5001/api/community/create",
-            formData,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "multipart/form-data"
-              }
-            }
-          );
-
-          console.log("✅ Backend response:", response.data);
-
-          // Reset fields
-          setContent("");
-          setFile(null);
-          setIsAnonymous(false);
-
-          console.log("🔄 Refreshing posts...");
-          fetchPosts();
-
-        } catch (err) {
-          console.log("❌ ERROR FROM BACKEND:", err.response?.data || err.message);
-
-          if (err.response?.data?.code === "AI_BLOCK") {
-            toast.error(err.response.data.message);
-          } else {
-            toast.error("Failed to create post");
-          }
-
-        } finally {
-          setLoading(false);
-          console.log("========= HANDLE POST END =========\n");
-        }
-      }
-    });
-  };
 
   const [totalUsers, setTotalUsers] = useState(0);
 
@@ -367,7 +374,60 @@ const Community = () => {
     } catch (err) {
       toast.error("Edit failed");
     } finally {
-      setEditLoading(false);
+      setIsFetchingPreview(false);
+    }
+  };
+
+  const handlePost = async () => {
+    if (!content.trim() && !file) {
+      toast.error("Please add some content to post!");
+      return;
+    }
+    setLoading(true);
+
+    const formData = new FormData();
+    formData.append("content", content);
+    formData.append("isAnonymous", isAnonymous);
+    if (file) {
+      formData.append("file", file);
+    }
+    // Append Link Preview if exists
+    if (linkPreview) {
+      formData.append("linkPreview", JSON.stringify(linkPreview));
+    }
+
+    try {
+      const res = await axios.post(
+        "http://localhost:5001/api/community/create",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (res.data.success) {
+        toast.success("Post created successfully!");
+        setContent("");
+        setFile(null);
+        setLinkPreview(null);
+      }
+    } catch (err) {
+      console.error(err);
+      if (err.response?.data?.code === "CONTENT_BLOCK") {
+        setAlertConfig({
+          isOpen: true,
+          title: "Post Blocked 🚫",
+          description: err.response.data.message,
+          action: null
+        });
+      } else {
+        toast.error(err.response?.data?.message || "Failed to create post");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -450,16 +510,143 @@ const Community = () => {
     }
   };
 
+  // ⚡ Socket & Initial Load
   useEffect(() => {
     fetchPosts();
+    fetchTrendingTags(); // 📈 Fetch tags from backend
+
+    // Listen for new posts
+    socket.on("new-post", (post) => {
+      console.log("🔥 New Post Received via Socket:", post);
+      // Don't auto-insert if user is mine (already added optimistically)
+      if (post.postedBy._id !== currentUserId) {
+        setNewPostsQueue((prev) => [post, ...prev]);
+        toast.info("New post available! 🚀");
+      }
+    });
+
+    socket.on("connect", () => {
+      console.log("🟢 Socket Connected:", socket.id);
+    });
+
+    socket.on("disconnect", () => {
+      console.log("🔴 Socket Disconnected");
+    });
+
+    return () => {
+      socket.off("new-post");
+      socket.off("connect");
+      socket.off("disconnect");
+    };
   }, []);
 
+  const fetchTrendingTags = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get("http://localhost:5001/api/community/trending", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.data.success) {
+        setTrendingTags(res.data.tags);
+      }
+    } catch (err) {
+      console.error("Failed to fetch trending tags", err);
+    }
+  };
+
+  const handleNewPostsClick = () => {
+    setPosts((prev) => [...newPostsQueue, ...prev]);
+    setNewPostsQueue([]);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const insertMarkdown = (type) => {
+    const textarea = document.getElementById("post-content-textarea");
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = content;
+    let newText = "";
+    let insertion = "";
+
+    switch (type) {
+      case "bold":
+        insertion = "**Bold Text**";
+        break;
+      case "italic":
+        insertion = "*Italic Text*";
+        break;
+      case "list":
+        insertion = "\n- List Item";
+        break;
+      case "code":
+        insertion = "\n```javascript\n// Your code here\n```\n";
+        break;
+      default:
+        return;
+    }
+
+    if (start !== end) {
+      // If text is selected, wrap it
+      const selected = text.substring(start, end);
+      switch (type) {
+        case "bold":
+          newText = text.substring(0, start) + `**${selected}**` + text.substring(end);
+          break;
+        case "italic":
+          newText = text.substring(0, start) + `*${selected}*` + text.substring(end);
+          break;
+        case "code":
+          newText = text.substring(0, start) + `\n\`\`\`javascript\n${selected}\n\`\`\`\n` + text.substring(end);
+          break;
+        default:
+          newText = text.substring(0, start) + insertion + text.substring(end);
+      }
+    } else {
+      newText = text.substring(0, start) + insertion + text.substring(end);
+    }
+
+    setContent(newText);
+    textarea.focus();
+  };
 
 
 
+
+
+
+  // Header Content for DashboardLayout
+  const headerContent = (
+    <div className="flex items-center gap-3 w-full max-w-md ml-4">
+      <div className="relative flex-1">
+        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-500" />
+        <Input
+          placeholder="Search posts or authors..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="pl-9 bg-slate-950 border-slate-800 focus:ring-violet-500/20 text-white"
+        />
+      </div>
+      <div className="relative">
+        <select
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value)}
+          className="h-10 px-3 py-2 bg-slate-950 border border-slate-800 rounded-md text-sm text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500/20 appearance-none pr-8 cursor-pointer hover:bg-slate-900"
+        >
+          <option value="latest">Latest</option>
+          <option value="oldest">Oldest</option>
+          <option value="popular">Popular</option>
+        </select>
+        <Filter className="absolute right-2.5 top-3 h-4 w-4 text-slate-500 pointer-events-none" />
+      </div>
+    </div>
+  );
 
   return (
-    <DashboardLayout >
+    <DashboardLayout
+      headerContent={headerContent}
+    >
       <ToastContainer
         position="top-right"
         autoClose={3000}
@@ -761,6 +948,17 @@ const Community = () => {
         <div className="flex gap-6 max-w-7xl mx-auto w-full items-start">
           {/* Left Column - Create Post & Feed */}
           <div className="flex-1">
+            {/* NEW POSTS ALERT */}
+            {newPostsQueue.length > 0 && (
+              <button
+                onClick={handleNewPostsClick}
+                className="w-full mb-4 bg-blue-600 hover:bg-blue-500 text-white p-3 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg transition-all animate-bounce"
+              >
+                <RefreshCw className="h-5 w-5" />
+                Show {newPostsQueue.length} new posts
+              </button>
+            )}
+
             {/* CREATE POST SECTION */}
             <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-2xl shadow-2xl border border-gray-700 mb-6 hover:border-green-400 transition-all duration-300">
               <div className="flex gap-3 mb-4">
@@ -768,9 +966,25 @@ const Community = () => {
                   You
                 </div>
                 <div className="flex-1">
+                  {/* Markdown Toolbar */}
+                  <div className="flex gap-2 mb-2 bg-gray-700/50 p-2 rounded-lg w-max">
+                    <button onClick={() => insertMarkdown('bold')} className="p-1 hover:bg-gray-600 rounded text-gray-300 hover:text-white" title="Bold">
+                      <FaBold />
+                    </button>
+                    <button onClick={() => insertMarkdown('italic')} className="p-1 hover:bg-gray-600 rounded text-gray-300 hover:text-white" title="Italic">
+                      <FaItalic />
+                    </button>
+                    <button onClick={() => insertMarkdown('list')} className="p-1 hover:bg-gray-600 rounded text-gray-300 hover:text-white" title="List">
+                      <FaList />
+                    </button>
+                    <button onClick={() => insertMarkdown('code')} className="p-1 hover:bg-gray-600 rounded text-gray-300 hover:text-white" title="Code Block">
+                      <FaCode />
+                    </button>
+                  </div>
                   <textarea
+                    id="post-content-textarea"
                     placeholder="What's on your mind? 🤔"
-                    className="w-full bg-gray-700 text-white p-4 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-green-400 placeholder-gray-400 transition-all"
+                    className="w-full bg-gray-700 text-white p-4 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-green-400 placeholder-gray-400 transition-all font-mono"
                     rows="3"
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
@@ -797,8 +1011,31 @@ const Community = () => {
                 </div>
               )}
 
-              {/* File Upload & Options */}
-              <div className="flex items-center justify-between gap-3">
+              {/* 🔗 Link Preview (Create Mode) */}
+              {isFetchingPreview && (
+                <div className="max-w-md mt-2 flex items-center gap-2 text-gray-400 text-sm animate-pulse">
+                  <Loader2 className="animate-spin h-3 w-3" /> Fetching preview...
+                </div>
+              )}
+              {linkPreview && (
+                <div className="mt-4 max-w-md rounded-xl border border-gray-700 bg-black/40 overflow-hidden relative group">
+                  <button
+                    onClick={() => setLinkPreview(null)}
+                    className="absolute top-2 right-2 bg-black/50 p-1 rounded-full text-white hover:bg-red-500 transition opacity-0 group-hover:opacity-100"
+                  >
+                    <FaTrash size={12} />
+                  </button>
+                  {linkPreview.image && (
+                    <img src={linkPreview.image} alt="prev" className="w-full h-32 object-cover" />
+                  )}
+                  <div className="p-3">
+                    <p className="font-bold text-sm text-gray-200 truncate">{linkPreview.title}</p>
+                    <p className="text-xs text-gray-500 uppercase mt-1">{linkPreview.domain}</p>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex items-center justify-between mt-4 border-t border-gray-700/50 pt-4">
                 <div className="flex gap-2 items-center">
                   <label className="cursor-pointer p-3 hover:bg-gray-700 rounded-lg transition flex items-center gap-2 group" title="Upload Image">
                     <input
@@ -856,18 +1093,31 @@ const Community = () => {
             {/* POSTS FEED */}
             <div className="space-y-5">
               {loadingPosts && (
-                <div className="text-center py-12">
-                  <div className="inline-block animate-spin">
-                    <div className="w-12 h-12 border-4 border-gray-600 border-t-green-400 rounded-full"></div>
-                  </div>
-                  <p className="text-gray-400 mt-4">Loading community posts...</p>
+                <div className="space-y-6">
+                  {[1, 2, 3].map((n) => (
+                    <div key={n} className="bg-gray-900 p-6 rounded-2xl border border-gray-800 space-y-4">
+                      <div className="flex items-center gap-4">
+                        <Skeleton className="h-12 w-12 rounded-full bg-gray-700" />
+                        <div className="space-y-2">
+                          <Skeleton className="h-4 w-32 bg-gray-700" />
+                          <Skeleton className="h-3 w-20 bg-gray-700" />
+                        </div>
+                      </div>
+                      <Skeleton className="h-4 w-full bg-gray-700" />
+                      <Skeleton className="h-4 w-3/4 bg-gray-700" />
+                      <Skeleton className="h-64 w-full rounded-xl bg-gray-700" />
+                    </div>
+                  ))}
                 </div>
               )}
 
               {!loadingPosts && filteredPosts.length === 0 && (
                 <div className="text-center py-16 bg-gray-800 rounded-xl border border-gray-700">
-                  <p className="text-gray-400 text-lg">
-                    {filter ? `No posts with ${filter}. Try another filter!` : "No posts yet. Be the first to share! 🚀"}
+                  <p className="text-gray-400 text-lg flex flex-col items-center gap-2">
+                    <span className="text-4xl">🔍</span>
+                    {filter || searchTerm
+                      ? "No results found. Try adjusting your search or filters."
+                      : "No posts yet. Be the first to share! 🚀"}
                   </p>
                 </div>
               )}
@@ -908,7 +1158,7 @@ const Community = () => {
                           </span>
                         )}
 
-                        {token && (
+                        {token && post.isMine && (
                           <button
                             onClick={() => handleDeletePost(post._id)}
                             className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition"
@@ -925,9 +1175,32 @@ const Community = () => {
                   {/* Post Content */}
                   <div className="p-5">
                     {post.content && (
-                      <p className="text-gray-200 leading-relaxed text-base">
+                      <div className="text-gray-200 leading-relaxed text-base prose prose-invert max-w-none">
                         {renderContent(post.content)}
-                      </p>
+                      </div>
+                    )}
+
+                    {/* 🔗 Link Preview Display */}
+                    {post.linkPreview?.title && (
+                      <a
+                        href={post.linkPreview.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block mt-4 rounded-xl border border-gray-700 bg-gray-900/50 overflow-hidden hover:bg-gray-800 transition group"
+                      >
+                        {post.linkPreview.image && (
+                          <img
+                            src={post.linkPreview.image}
+                            alt="preview"
+                            className="w-full h-48 object-cover group-hover:opacity-90 transition"
+                          />
+                        )}
+                        <div className="p-4">
+                          <h4 className="font-bold text-gray-200 group-hover:text-blue-400 transition">{post.linkPreview.title}</h4>
+                          <p className="text-sm text-gray-400 mt-1 line-clamp-2">{post.linkPreview.description}</p>
+                          <p className="text-xs text-gray-500 mt-2 uppercase tracking-wider">{post.linkPreview.domain}</p>
+                        </div>
+                      </a>
                     )}
 
                     {/* Media */}
@@ -939,7 +1212,7 @@ const Community = () => {
                           <img
                             src={post.media.url}
                             alt="post"
-                            className="w-full h-auto max-h-96 object-cover hover:scale-105 transition-transform duration-300 cursor-pointer"
+                            className="w-full h-auto max-h-80 object-contain mx-auto hover:scale-[1.01] transition-transform duration-300 cursor-pointer rounded-lg bg-black/20"
                             onClick={() => {
                               setSelectedImage(post.media.url);
                               setShowModal(true);
@@ -952,7 +1225,7 @@ const Community = () => {
                           <video
                             src={post.media.url}
                             controls
-                            className="w-full max-h-96 rounded-xl"
+                            className="w-full h-auto max-h-80 mx-auto rounded-xl bg-black/20"
                           />
                         )}
 
@@ -1009,43 +1282,11 @@ const Community = () => {
                 </div>
               ))}
             </div>
+
           </div>
 
           {/* Right Sidebar - Trending & Stats */}
           <div className="w-80 flex-shrink-0 hidden lg:block space-y-5">
-            {/* Trending Section */}
-            <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-2xl shadow-lg border border-gray-700">
-              <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-                <span className="text-2xl">🔥</span> Trending
-              </h2>
-              <button
-                onClick={() => setFilter(null)}
-                className={`w-full p-3 mb-3 rounded-lg cursor-pointer transition ${!filter ? 'bg-green-600 text-white' : 'bg-gray-700 hover:bg-gray-600'}`}
-              >
-                <p className="font-semibold text-sm">All Posts ({posts.length})</p>
-              </button>
-              <div className="space-y-3">
-                {[
-                  { label: "Campus Life", tag: "#Campus" },
-                  { label: "Study Tips", tag: "#Study" },
-                  { label: "Projects", tag: "#Project" },
-                  { label: "Events", tag: "#Event" },
-                  { label: "News", tag: "#News" }
-                ].map(
-                  (trend, idx) => (
-                    <div
-                      key={idx}
-                      onClick={() => setFilter(trend.tag)}
-                      className={`p-3 rounded-lg cursor-pointer transition ${filter === trend.tag ? 'bg-green-600 text-white' : 'bg-gray-700 hover:bg-gray-600'}`}
-                    >
-                      <p className="font-semibold text-sm">{trend.label} ({getTagCount(trend.tag)})</p>
-                      <p className="text-xs text-gray-400">Trending Now</p>
-                    </div>
-                  )
-                )}
-              </div>
-            </div>
-
             {/* Stats Section */}
             <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-2xl shadow-lg border border-gray-700">
               <h2 className="text-xl font-bold mb-4">Community Stats</h2>
@@ -1064,17 +1305,51 @@ const Community = () => {
                 </div>
               </div>
             </div>
+
+            {/* Trending Section */}
+            <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-2xl shadow-lg border border-gray-700">
+              <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+                <span className="text-2xl"></span> Trending
+              </h2>
+
+              <div className="space-y-3">
+                <button
+                  onClick={() => setFilter(null)}
+                  className={`w-full p-3 mb-3 rounded-lg cursor-pointer transition ${!filter ? 'bg-green-600 text-white' : 'bg-gray-700 hover:bg-gray-600'}`}
+                >
+                  <p className="font-semibold text-sm">All Posts</p>
+                </button>
+
+                {trendingTags.length > 0 ? (
+                  trendingTags.map((trend, idx) => (
+                    <div
+                      key={idx}
+                      onClick={() => setFilter(trend.tag)}
+                      className={`p-3 rounded-lg cursor-pointer transition flex justify-between items-center ${filter === trend.tag ? 'bg-green-600 text-white' : 'bg-gray-700 hover:bg-gray-600'}`}
+                    >
+                      <span className="font-semibold text-sm">#{trend.tag}</span>
+                      <span className="bg-gray-900 text-xs px-2 py-1 rounded-full text-gray-400">{trend.count}</span>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-500 text-sm text-center">No trending topics yet.</p>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
+
       {/* Image Modal */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50" onClick={() => setShowModal(false)}>
-          <img src={selectedImage} alt="Full view" className="max-w-full max-h-full object-contain" />
-        </div>
-      )}
-    </DashboardLayout>
+      {
+        showModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50" onClick={() => setShowModal(false)}>
+            <img src={selectedImage} alt="Full view" className="max-w-full max-h-full object-contain" />
+          </div>
+        )
+      }
+    </DashboardLayout >
   );
 };
 
