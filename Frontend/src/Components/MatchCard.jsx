@@ -21,7 +21,7 @@ const MatchCard = ({ user }) => {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`
                 },
-                body: JSON.stringify({ receiverId: user.id })
+                body: JSON.stringify({ receiverId: user.id || user._id })
             });
             const data = await res.json();
 
@@ -45,7 +45,7 @@ const MatchCard = ({ user }) => {
     return (
         <div
             className="group relative bg-slate-900 border border-slate-800 rounded-xl overflow-hidden hover:border-violet-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-violet-500/10 cursor-pointer"
-            onClick={() => window.open(`/u/${user.id}`, '_blank')}
+            onClick={() => window.open(`/u/${user.id || user._id}`, '_blank')}
         >
             {/* Header Background */}
             <div className="h-24 bg-gradient-to-r from-violet-600/20 to-purple-600/20 group-hover:from-violet-600/30 group-hover:to-purple-600/30 transition-all" />
@@ -133,7 +133,11 @@ const MatchCard = ({ user }) => {
                 {/* Actions */}
                 <div className="flex gap-2 mt-auto">
                     {status === 'pending' ? (
-                        <Button className="flex-1 bg-slate-800 text-slate-400 border border-slate-700 cursor-not-allowed" disabled>
+                        <Button
+                            className="flex-1 bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:border-violet-500/30 transition-all"
+                            onClick={handleConnect}
+                            disabled={loading}
+                        >
                             <Clock className="h-4 w-4 mr-2" />
                             Pending
                         </Button>

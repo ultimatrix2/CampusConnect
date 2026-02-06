@@ -19,6 +19,7 @@ const commentRoutes = require("./routes/commentRoutes");
 
 /* SOCKET */
 const { initSocket } = require("./config/socket");
+const { startRatingUpdateJob } = require("./cron/updateRatings");
 
 /* MIDDLEWARE */
 app.use(cors({ origin: "http://localhost:3000", credentials: true }));
@@ -37,6 +38,7 @@ app.use("/api/codeforces", codeforcesRoutes);
 app.use("/api/community", postRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/matches", require("./routes/matchRoutes"));
+app.use("/api/notifications", require("./routes/notificationRoutes"));
 app.use("/api/connections", require("./routes/connectionRoutes"));
 
 /* DB */

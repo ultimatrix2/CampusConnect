@@ -264,3 +264,27 @@ exports.markMessagesRead = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+
+/* =========================
+   REMOVE CHAT
+   ========================= */
+exports.removeChat = async (req, res) => {
+  try {
+    const { chatId } = req.body;
+    const userId = req.user._id;
+
+    const chat = await Chat.findById(chatId);
+    if (!chat) return res.status(404).json({ message: "Chat not found" });
+
+    // Remove user from members
+    await Chat.findByIdAndUpdate(chatId, {
+      $pull: { members: userId }
+    });
+
+    res.json({ success: true, message: "Chat removed" });
+
+  } catch (err) {
+    console.error("Remove Chat Error:", err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+};

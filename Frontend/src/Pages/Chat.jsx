@@ -3,8 +3,19 @@ import { DashboardLayout } from "../Components/DashboardLayout";
 import socket from "../socket"; // socket.io-client file
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Search, MoreVertical, Send, Check, Trash2, Edit2, X, MessageSquare, Users, Smile, Trash, Paperclip, CheckCheck } from "lucide-react";
+import { Search, MoreVertical, Send, Check, Trash2, Edit2, X, MessageSquare, Users, Smile, Trash, Paperclip, CheckCheck, FileText, ExternalLink } from "lucide-react";
 import EmojiPicker from "emoji-picker-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "../Components/ui/alert-dialog";
 
 function Chat() {
   const token = localStorage.getItem("token");
@@ -44,6 +55,14 @@ function Chat() {
   // Header Menu
   const [showHeaderMenu, setShowHeaderMenu] = useState(false);
   const headerMenuRef = useRef(null);
+
+  // Alert Dialog State
+  const [alertConfig, setAlertConfig] = useState({
+    isOpen: false,
+    title: "",
+    description: "",
+    action: null, // Function to execute on confirm
+  });
 
   // Search for Contacts/Chats Sidebar
   const [sidebarSearch, setSidebarSearch] = useState("");
@@ -96,15 +115,16 @@ function Chat() {
 
   const fetchUsers = async () => {
     try {
-      const res = await fetch("http://localhost:5001/api/users/get-all-users", {
+      const res = await fetch("http://localhost:5001/api/connections/accepted", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
-      // Filter out myself
-      const otherUsers = Array.isArray(data.data)
-        ? data.data.filter(u => u._id !== myUserId)
-        : [];
-      setUsers(otherUsers);
+
+      if (data.success) {
+        setUsers(data.connections || []);
+      } else {
+        setUsers([]);
+      }
     } catch (err) {
       console.error("Fetch users error:", err);
       setUsers([]);
@@ -354,51 +374,99 @@ function Chat() {
     setEditedText("");
   };
 
-  const handleDeleteMessage = async (msgId) => {
-    if (!window.confirm("Are you sure you want to delete this message?")) return;
-    await fetch("http://localhost:5001/api/chat/delete-message", {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        chatId: currentChat._id,
-        messageId: msgId,
-      }),
+  const handleDeleteMessage = (msgId) => {
+    setAlertConfig({
+      isOpen: true,
+      title: "Delete Message",
+      description: "Are you sure you want to delete this message? This action cannot be undone.",
+      action: async () => {
+        await fetch("http://localhost:5001/api/chat/delete-message", {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            chatId: currentChat._id,
+            messageId: msgId,
+          }),
+        });
+        // Optimistic update
+        setMessages((prev) => prev.filter(m => m._id !== msgId));
+        toast.success("Message deleted");
+      }
     });
-    // Optimistic update
-    setMessages((prev) => prev.filter(m => m._id !== msgId));
-    toast.success("Message deleted");
   };
+
 
   const handleClearChat = async () => {
     if (!currentChat) return;
-    if (!window.confirm("Are you sure you want to clear the chat? This will remove all messages for you.")) return;
 
-    try {
-      const res = await fetch("http://localhost:5001/api/chat/clear-chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ chatId: currentChat._id }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setMessages([]);
-        toast.success("Chat cleared");
-        fetchMyChats(); // Refresh last message preview in list
-      } else {
-        toast.error(data.message || "Failed to clear chat");
+    setAlertConfig({
+      isOpen: true,
+      title: "Clear Chat",
+      description: "Are you sure you want to clear the chat? This will remove all messages for you.",
+      action: async () => {
+        try {
+          const res = await fetch("http://localhost:5001/api/chat/clear-chat", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ chatId: currentChat._id }),
+          });
+          const data = await res.json();
+          if (data.success) {
+            setMessages([]);
+            toast.success("Chat cleared");
+            fetchMyChats(); // Refresh last message preview in list
+          } else {
+            toast.error(data.message || "Failed to clear chat");
+          }
+        } catch (err) {
+          console.error("Clear Chat Error", err);
+          toast.error("Something went wrong");
+        }
+        setShowHeaderMenu(false);
       }
-    } catch (err) {
-      console.error("Clear Chat Error", err);
-      toast.error("Something went wrong");
-    }
-    setShowHeaderMenu(false);
+    });
   }
+
+  const handleRemoveChat = async () => {
+    if (!currentChat) return;
+
+    setAlertConfig({
+      isOpen: true,
+      title: "Delete Chat",
+      description: "Are you sure you want to delete this chat? It will be removed from your list.",
+      action: async () => {
+        try {
+          const res = await fetch("http://localhost:5001/api/chat/remove-chat", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ chatId: currentChat._id }),
+          });
+          const data = await res.json();
+          if (data.success) {
+            toast.success("Chat deleted");
+            setMyChats(prev => prev.filter(c => c._id !== currentChat._id));
+            setCurrentChat(null);
+            setMessages([]);
+          } else {
+            toast.error(data.message || "Failed to delete chat");
+          }
+        } catch (err) {
+          console.error("Remove Chat Error", err);
+          toast.error("Something went wrong");
+        }
+        setShowHeaderMenu(false);
+      }
+    });
+  };
 
   /* =========================
      RENDERING HELPERS
@@ -427,6 +495,32 @@ function Chat() {
 
   return (
     <DashboardLayout>
+      {/* Alert Dialog Component */}
+      <AlertDialog open={alertConfig.isOpen} onOpenChange={(open) => {
+        if (!open) setAlertConfig(prev => ({ ...prev, isOpen: false }));
+      }}>
+        <AlertDialogContent className="bg-slate-900 border border-slate-700 text-slate-200 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 max-w-lg w-full">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-white">{alertConfig.title}</AlertDialogTitle>
+            <AlertDialogDescription className="text-slate-400">
+              {alertConfig.description}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="bg-slate-800 text-white hover:bg-slate-700 border-slate-700">Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (alertConfig.action) alertConfig.action();
+                setAlertConfig(prev => ({ ...prev, isOpen: false }));
+              }}
+              className="bg-red-600 hover:bg-red-700 text-white border-none"
+            >
+              Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <div className="h-[calc(100vh-6rem)] md:h-[calc(100vh-7rem)] w-full flex bg-slate-950 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
 
         {/* ================= SIDEBAR ================= */}
@@ -602,7 +696,13 @@ function Chat() {
                           onClick={handleClearChat}
                           className="w-full text-left px-4 py-3 text-sm text-red-400 hover:bg-slate-800 hover:text-red-300 flex items-center gap-2 transition-colors"
                         >
-                          <Trash className="w-4 h-4" /> Clear Chat
+                          <Trash className="w-4 h-4" /> Clear Messages
+                        </button>
+                        <button
+                          onClick={handleRemoveChat}
+                          className="w-full text-left px-4 py-3 text-sm text-red-500 hover:bg-slate-800 hover:text-red-400 flex items-center gap-2 transition-colors border-t border-slate-800"
+                        >
+                          <X className="w-4 h-4" /> Delete Chat
                         </button>
                       </div>
                     )}
@@ -642,9 +742,32 @@ function Chat() {
                             </div>
                           )}
 
+
                           {isFile ? (
-                            <div className="rounded-xl overflow-hidden border border-slate-700 max-w-[250px] shadow-lg">
-                              <img src={msg.file} alt="attachment" className="w-full h-auto object-cover" />
+                            <div className="rounded-xl overflow-hidden border border-slate-700 max-w-[250px] shadow-lg bg-slate-900">
+                              {/* Check if image based on extension assumption or if we had mime type */}
+                              {/\.(jpg|jpeg|png|gif|webp)$/i.test(msg.file) ? (
+                                <img src={msg.file} alt="attachment" className="w-full h-auto object-cover" />
+                              ) : (
+                                <div className="flex items-center gap-3 p-3 min-w-[200px]">
+                                  <div className="bg-slate-800 p-2.5 rounded-lg flex-shrink-0">
+                                    <FileText className="w-6 h-6 text-blue-400" />
+                                  </div>
+                                  <div className="flex-1 min-w-0 overflow-hidden">
+                                    <p className="text-sm font-medium text-slate-200 truncate" title={msg.file.split('/').pop()}>
+                                      {msg.file.split('/').pop().slice(-20) || "File"}
+                                    </p>
+                                    <a
+                                      href={msg.file}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-xs text-blue-400 hover:text-blue-300 hover:underline flex items-center gap-1 mt-0.5"
+                                    >
+                                      Open File <ExternalLink className="w-3 h-3" />
+                                    </a>
+                                  </div>
+                                </div>
+                              )}
                             </div>
                           ) : (
                             <>
@@ -746,7 +869,7 @@ function Chat() {
                       ref={fileInputRef}
                       onChange={handleFileSelect}
                       className="hidden"
-                      accept="image/*"
+                      accept="*"
                     />
                     <button onClick={() => fileInputRef.current?.click()} className="p-2 text-slate-400 hover:text-blue-400 transition-colors">
                       <Paperclip className="w-5 h-5" />

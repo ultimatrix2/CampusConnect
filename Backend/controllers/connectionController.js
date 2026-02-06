@@ -1,5 +1,6 @@
 const ConnectionRequest = require("../models/ConnectionRequest");
 const User = require("../models/User");
+const Notification = require("../models/Notification");
 
 // Send a connection request
 exports.sendRequest = async (req, res) => {
@@ -11,6 +12,8 @@ exports.sendRequest = async (req, res) => {
             return res.status(400).json({ success: false, message: "You cannot connect with yourself." });
         }
 
+        console.log(`Connection Request: Sender ${senderId} to Receiver ${receiverId}`);
+
         // Check if request already exists
         const existingRequest = await ConnectionRequest.findOne({
             $or: [
@@ -20,8 +23,24 @@ exports.sendRequest = async (req, res) => {
         });
 
         if (existingRequest) {
+            console.log("Existing request found:", existingRequest);
             if (existingRequest.status === "pending") {
-                return res.status(400).json({ success: false, message: "Connection request already pending." });
+                // Check if notification exists, if not create one (Retry logic)
+                const senderUser = await User.findById(senderId);
+
+                // Try to find if we already notified them recently to avoid spam? 
+                // For now, just send it. It fixes the "user didn't get notification" bug.
+
+                await Notification.create({
+                    recipient: receiverId,
+                    sender: senderId,
+                    type: "connection_request",
+                    message: `You have a connection request from ${senderUser.name}`,
+                    relatedId: existingRequest._id,
+                    onModel: "ConnectionRequest"
+                });
+
+                return res.status(200).json({ success: true, message: "Request resent!" });
             }
             if (existingRequest.status === "accepted") {
                 return res.status(400).json({ success: false, message: "You are already connected." });
@@ -34,7 +53,20 @@ exports.sendRequest = async (req, res) => {
             status: "pending"
         });
 
-        await newRequest.save();
+        const savedRequest = await newRequest.save();
+        console.log("Request saved:", savedRequest._id);
+
+        // Create Notification for Receiver
+        const senderUser = await User.findById(senderId);
+        const notif = await Notification.create({
+            recipient: receiverId,
+            sender: senderId,
+            type: "connection_request",
+            message: `You have a connection request from ${senderUser.name}`,
+            relatedId: savedRequest._id,
+            onModel: "ConnectionRequest"
+        });
+        console.log("Notification created:", notif._id);
 
         res.status(201).json({ success: true, message: "Connection request sent!" });
 
@@ -96,8 +128,25 @@ exports.acceptRequest = async (req, res) => {
         request.status = "accepted";
         await request.save();
 
-        // TODO: Add to users' connection lists if you handle that in User model too
-        // For now, ConnectionRequest collection is the source of truth
+        // Update User Connections
+        await User.findByIdAndUpdate(request.sender, {
+            $addToSet: { connections: request.receiver }
+        });
+
+        await User.findByIdAndUpdate(request.receiver, {
+            $addToSet: { connections: request.sender }
+        });
+
+        // Notify Sender
+        const receiverUser = await User.findById(userId);
+        await Notification.create({
+            recipient: request.sender,
+            sender: userId,
+            type: "info",
+            message: `${receiverUser.name} accepted your connection request.`,
+            relatedId: request._id,
+            onModel: "ConnectionRequest"
+        });
 
         res.status(200).json({ success: true, message: "Connection accepted!" });
 
@@ -124,12 +173,31 @@ exports.rejectRequest = async (req, res) => {
         }
 
         request.status = "rejected";
-        await request.save(); // Or delete it
+        await request.save();
 
         res.status(200).json({ success: true, message: "Connection rejected." });
 
     } catch (error) {
         console.error("Reject Request Error:", error);
         res.status(500).json({ success: false, message: "Server error rejecting request." });
+    }
+};
+
+// Get accepted connections
+exports.getAcceptedConnections = async (req, res) => {
+    try {
+        const userId = req.user._id;
+
+        const user = await User.findById(userId).populate("connections", "name username email profileImage role branch");
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        res.status(200).json({ success: true, connections: user.connections });
+
+    } catch (error) {
+        console.error("Get Connections Error:", error);
+        res.status(500).json({ success: false, message: "Server error fetching connections." });
     }
 };

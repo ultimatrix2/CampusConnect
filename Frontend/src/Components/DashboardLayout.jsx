@@ -4,6 +4,7 @@ import { AppSidebar } from "@/Components/app-sidebar";
 import { Separator } from "@/Components/ui/separator";
 import { Button } from "@/Components/ui/button";
 import { Moon, Sun } from "lucide-react";
+import NotificationDropdown from "./NotificationDropdown";
 
 /**
  * DashboardLayout - Shared layout component with sidebar and header
@@ -47,6 +48,9 @@ export function DashboardLayout({ children, headerContent, title, subtitle }) {
                     )}
 
                     {!headerContent && <div className="flex-1" />}
+
+                    {/* Notifications */}
+                    <NotificationDropdown />
 
                     {/* Dark Mode Toggle */}
                     <Button

@@ -43,6 +43,23 @@ exports.findMatches = async (req, res) => {
         const users = await User.find({ _id: { $ne: userId } })
             .select("name email profileImage skills leetcodeRating codeforcesRating branch");
 
+        // 2b. Fetch existing connection requests for this user
+        // We need to know if we already requested or are connected
+        const ConnectionRequest = require("../models/ConnectionRequest");
+        const myRequests = await ConnectionRequest.find({
+            $or: [{ sender: userId }, { receiver: userId }]
+        });
+
+        const statusMap = new Map();
+        myRequests.forEach(req => {
+            const otherId = req.sender.toString() === userId.toString() ? req.receiver.toString() : req.sender.toString();
+            // If already connected/accepted, status is 'connected'
+            // If pending and I sent it, status is 'pending'
+            // If pending and they sent it, status is 'pending' (or 'received' if we want to distinguish)
+            // For MatchCard simplicity, 'pending' or 'connected' is enough to disable button.
+            statusMap.set(otherId, req.status);
+        });
+
         // 3. Run Matching Algorithm
         const matches = users.map(mentor => {
             // Initial Data Prep
@@ -104,7 +121,8 @@ exports.findMatches = async (req, res) => {
                 skills: mentorTags,
                 strengths: extraSkills,
                 matchPercentage: Math.round(finalScore * 100),
-                score: finalScore
+                score: finalScore,
+                connectionStatus: statusMap.get(mentor._id.toString()) || 'none'
             };
         })
             .filter(m => m !== null) // Remove rejected matches

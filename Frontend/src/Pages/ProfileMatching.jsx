@@ -36,7 +36,8 @@ const ProfileMatching = () => {
                     strengths: m.strengths || [],
                     leetcodeRating: m.leetcodeRating,
                     codeforcesRating: m.codeforcesRating,
-                    matchPercentage: m.matchPercentage
+                    matchPercentage: m.matchPercentage,
+                    connectionStatus: m.connectionStatus
                 }));
                 setMatches(formattedMatches);
                 setDebugInfo(data.debug);

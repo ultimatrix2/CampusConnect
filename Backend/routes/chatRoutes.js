@@ -25,9 +25,11 @@ cloudinary.config({
 
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
-  params: {
-    folder: "chat_uploads",
-    allowed_formats: ["jpg", "png", "jpeg", "pdf"],
+  params: async (req, file) => {
+    return {
+      folder: "chat_uploads",
+      resource_type: "auto",
+    };
   },
 });
 
@@ -49,6 +51,7 @@ router.post(
 router.put("/edit-message", authMiddleware, editMessage);
 router.delete("/delete-message", authMiddleware, deleteMessage);
 router.post("/clear-chat", authMiddleware, clearChat);
+router.post("/remove-chat", authMiddleware, require("../controllers/chatController").removeChat);
 router.put("/mark-read", authMiddleware, markMessagesRead);
 
 
