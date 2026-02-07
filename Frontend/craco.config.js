@@ -6,4 +6,16 @@ module.exports = {
             '@': path.resolve(__dirname, 'src'),
         },
     },
+    devServer: {
+        client: {
+            overlay: {
+                runtimeErrors: (error) => {
+                    if (error.message && error.message.includes('ResizeObserver')) {
+                        return false;
+                    }
+                    return true;
+                },
+            },
+        },
+    },
 };

@@ -1,0 +1,851 @@
+/* ===== CodeLab Container ===== */
+.codelab-container {
+    width: 100%;
+    height: calc(100vh - 64px);
+    background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
+    overflow: hidden;
+}
+
+/* ===== Landing Page ===== */
+.codelab-landing {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 2rem;
+}
+
+.landing-content {
+    text-align: center;
+    max-width: 800px;
+}
+
+.landing-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 120px;
+    height: 120px;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    border-radius: 24px;
+    color: white;
+    margin-bottom: 2rem;
+    box-shadow: 0 20px 40px rgba(99, 102, 241, 0.3);
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.landing-content h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1rem;
+}
+
+.landing-content>p {
+    font-size: 1.2rem;
+    color: #94a3b8;
+    margin-bottom: 2.5rem;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.feature-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-5px);
+    border-color: rgba(99, 102, 241, 0.5);
+}
+
+.feature-icon {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+    display: block;
+}
+
+.feature-card h3 {
+    font-size: 1rem;
+    color: #fff;
+    margin-bottom: 0.5rem;
+}
+
+.feature-card p {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin: 0;
+}
+
+.room-dialog-trigger {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    color: white;
+    padding: 0.875rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+}
+
+.room-dialog-trigger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 30px rgba(99, 102, 241, 0.4);
+}
+
+/* ===== Active Room ===== */
+.codelab-active {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.room-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1.5rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.room-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.room-info h2 {
+    font-size: 1.1rem;
+    color: #fff;
+    margin: 0;
+}
+
+.room-code-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(99, 102, 241, 0.2);
+    padding: 0.375rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    color: #a5b4fc;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.room-code-badge:hover {
+    background: rgba(99, 102, 241, 0.3);
+}
+
+.room-participants {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #94a3b8;
+    font-size: 0.875rem;
+}
+
+.leave-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.leave-btn:hover {
+    background: rgba(239, 68, 68, 0.3);
+}
+
+/* ===== Workspace ===== */
+.codelab-workspace {
+    flex: 1;
+    overflow: hidden;
+}
+
+.main-panels {
+    height: 100%;
+}
+
+/* ===== Code Editor Panel ===== */
+.code-editor-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: #1e1e2e;
+}
+
+.code-editor-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.625rem 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.editor-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.editor-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.language-select {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.language-select option {
+    background: #1e1e2e;
+}
+
+.input-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    background: rgba(255, 255, 255, 0.1);
+    color: #94a3b8;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    padding: 0.375rem 0.625rem;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.input-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+}
+
+.run-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 0.375rem 0.875rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.run-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+}
+
+.run-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.run-btn .spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Input Panel */
+.stdin-panel {
+    background: rgba(0, 0, 0, 0.4);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stdin-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 1rem;
+    color: #94a3b8;
+    font-size: 0.75rem;
+}
+
+.stdin-header button {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 0.25rem;
+}
+
+.stdin-header button:hover {
+    color: #fff;
+}
+
+.stdin-input {
+    width: 100%;
+    height: 60px;
+    background: #0d0d15;
+    border: none;
+    padding: 0.5rem 1rem;
+    color: #e2e8f0;
+    font-family: 'Fira Code', 'Cascadia Code', Consolas, monospace;
+    font-size: 0.8rem;
+    resize: none;
+}
+
+.stdin-input::placeholder {
+    color: #475569;
+}
+
+.editor-wrapper {
+    flex: 1;
+    overflow: hidden;
+}
+
+.editor-wrapper.with-output {
+    flex: 0.6;
+}
+
+/* Output Panel */
+.output-panel {
+    flex: 0.4;
+    display: flex;
+    flex-direction: column;
+    background: #0d0d15;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.output-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    color: #94a3b8;
+    font-size: 0.75rem;
+}
+
+.output-header button {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 0.25rem;
+}
+
+.output-header button:hover {
+    color: #fff;
+}
+
+.output-content {
+    flex: 1;
+    margin: 0;
+    padding: 0.75rem 1rem;
+    overflow: auto;
+    color: #e2e8f0;
+    font-family: 'Fira Code', 'Cascadia Code', Consolas, monospace;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* ===== Video Call Panel ===== */
+.video-call-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: #1a1a2e;
+}
+
+.video-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.video-grid {
+    flex: 1;
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    overflow: hidden;
+}
+
+.video-wrapper {
+    position: relative;
+    background: #0f0f1a;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.video-wrapper video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.video-wrapper.video-off video {
+    opacity: 0.3;
+}
+
+.video-label {
+    position: absolute;
+    bottom: 0.5rem;
+    left: 0.5rem;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    color: #fff;
+}
+
+.video-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.incoming-call,
+.waiting-call {
+    text-align: center;
+    color: #94a3b8;
+}
+
+.incoming-call p,
+.waiting-call p {
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+}
+
+.call-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.call-btn.start,
+.call-btn.answer {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    color: white;
+    border: none;
+}
+
+.video-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.control-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.control-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.control-btn.off {
+    background: rgba(239, 68, 68, 0.3);
+    color: #f87171;
+}
+
+.control-btn.end-call {
+    background: #ef4444;
+}
+
+/* ===== Session Chat Panel ===== */
+.session-chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: #1a1a2e;
+}
+
+.chat-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.messages-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.75rem;
+}
+
+.no-messages {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #64748b;
+    font-size: 0.875rem;
+}
+
+.message {
+    margin-bottom: 0.75rem;
+}
+
+.message.own .message-content {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    margin-left: auto;
+}
+
+.message.other .message-content {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.message-content {
+    max-width: 85%;
+    padding: 0.5rem 0.75rem;
+    border-radius: 12px;
+}
+
+.message-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.sender-name {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 500;
+}
+
+.message-time {
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.message-text {
+    font-size: 0.875rem;
+    color: #fff;
+    margin: 0;
+    word-break: break-word;
+}
+
+.message-input-form {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.message-input {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+    color: #fff;
+    font-size: 0.875rem;
+}
+
+.message-input::placeholder {
+    color: #64748b;
+}
+
+.send-btn {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.send-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ===== Whiteboard Panel ===== */
+.whiteboard-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: #1e1e2e;
+}
+
+.whiteboard-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.color-picker {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.color-btn {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.color-btn.active {
+    border-color: #fff;
+    transform: scale(1.2);
+}
+
+.brush-size-slider {
+    width: 60px;
+    accent-color: #6366f1;
+}
+
+.clear-btn {
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+    border: none;
+    padding: 0.375rem;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.clear-btn:hover {
+    background: rgba(239, 68, 68, 0.3);
+}
+
+.canvas-wrapper {
+    flex: 1;
+    background: #2d2d44;
+    overflow: hidden;
+}
+
+.whiteboard-canvas {
+    width: 100%;
+    height: 100%;
+    cursor: crosshair;
+}
+
+/* ===== Room Dialog Styles ===== */
+.room-dialog-content {
+    background: #1a1a2e !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    max-width: 420px;
+}
+
+.mode-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.mode-tab {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: #94a3b8;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.mode-tab.active {
+    background: rgba(99, 102, 241, 0.2);
+    border-color: rgba(99, 102, 241, 0.5);
+    color: #a5b4fc;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #94a3b8;
+    font-size: 0.875rem;
+}
+
+.error-message {
+    color: #f87171;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+}
+
+.submit-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    color: white;
+}
+
+.room-created {
+    text-align: center;
+    padding: 1rem 0;
+}
+
+.room-code-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: rgba(99, 102, 241, 0.2);
+    padding: 1rem;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+}
+
+.room-code {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #a5b4fc;
+    letter-spacing: 0.2em;
+}
+
+.room-name {
+    color: #94a3b8;
+    margin-bottom: 1.5rem;
+}
+
+.enter-room-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    color: white;
+}
+
+/* ===== Resizable Handle ===== */
+[data-panel-group-direction="horizontal"]>[data-resize-handle],
+[data-panel-group-direction="vertical"]>[data-resize-handle] {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+[data-panel-group-direction="horizontal"]>[data-resize-handle]:hover,
+[data-panel-group-direction="vertical"]>[data-resize-handle]:hover {
+    background: rgba(99, 102, 241, 0.5);
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+    .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .landing-content h1 {
+        font-size: 2rem;
+    }
+}

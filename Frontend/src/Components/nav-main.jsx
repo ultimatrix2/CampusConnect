@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { LayoutDashboard, MessageSquare, Users, UserPlus } from "lucide-react";
+import { LayoutDashboard, MessageSquare, Users } from "lucide-react";
 import {
     SidebarMenu,
     SidebarMenuButton,
@@ -27,7 +27,6 @@ const navItems = [
         icon: Users,
         activeClass: "bg-gradient-to-r from-emerald-600 to-teal-600",
     },
-
 ];
 
 export function NavMain() {

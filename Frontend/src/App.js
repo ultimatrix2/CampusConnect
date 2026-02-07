@@ -16,6 +16,7 @@ import { loginSuccess } from "./redux/userSlice";
 import Profile from "./Pages/Profile.jsx";
 import Community from "./Pages/Community.jsx";
 import ProfileMatching from "./Pages/ProfileMatching.jsx";
+import CodeLab from "./Pages/CodeLab.jsx";
 
 function App() {
   const user = useSelector((state) => state.user.currentUser);
@@ -78,6 +79,7 @@ function App() {
         />
         <Route path="/community" element={user ? <Community /> : <Navigate to="/" />}  ></Route>
         <Route path="/matching" element={user ? <ProfileMatching /> : <Navigate to="/" />}  ></Route>
+        <Route path="/code" element={user ? <CodeLab /> : <Navigate to="/" />} />
         {/* OTHER USER PROFILE */}
         <Route
           path="/u/:id"

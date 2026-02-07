@@ -40,6 +40,7 @@ app.use("/api/comments", commentRoutes);
 app.use("/api/matches", require("./routes/matchRoutes"));
 app.use("/api/notifications", require("./routes/notificationRoutes"));
 app.use("/api/connections", require("./routes/connectionRoutes"));
+app.use("/api/code-session", require("./routes/codeSessionRoutes"));
 
 /* DB */
 mongoose
