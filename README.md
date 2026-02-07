@@ -340,24 +340,6 @@ Create a `.env` file in the `Backend/` directory with the following variables:
 
 ---
 
-## Contributors
-
-**Team Name:** syntax_squad
-
-* [Neelendra Pratap](https://github.com/ultimatrix2)
-* [Kamani Kumari](https://github.com/Kamani-Kumari)
-* [Mayank Agrawal](https://github.com/amayank18)
-* [Anshika Kesari](https://github.com/02-Anshika)
-
----
-
-## Future Scope
-
-* Integrate **WebRTC-based real-time video calling** for seamless peer-to-peer communication.
-* Build **interactive heatmaps** to visualize user activity and skill progression.
-* Develop a **recommendation system** to suggest content and connections based on profile domains like ML, DSA, and Web Development.
-
----
 
 ### Made at:
 
