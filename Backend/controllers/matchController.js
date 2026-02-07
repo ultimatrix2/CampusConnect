@@ -56,8 +56,15 @@ exports.findMatches = async (req, res) => {
             // If already connected/accepted, status is 'connected'
             // If pending and I sent it, status is 'pending'
             // If pending and they sent it, status is 'pending' (or 'received' if we want to distinguish)
-            // For MatchCard simplicity, 'pending' or 'connected' is enough to disable button.
-            statusMap.set(otherId, req.status);
+            // If rejected, we want to allow sending again, so we can map it to 'none' or 'rejected'.
+            // For UI simplicity:
+            // 'rejected' -> 'none' (so button says "Connect" again)
+
+            if (req.status === 'rejected') {
+                statusMap.set(otherId, 'none');
+            } else {
+                statusMap.set(otherId, req.status);
+            }
         });
 
         // 3. Run Matching Algorithm

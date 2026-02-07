@@ -7,7 +7,9 @@ import toast from 'react-hot-toast';
 
 const MatchCard = ({ user }) => {
     const navigate = useNavigate();
-    const [status, setStatus] = useState(user.connectionStatus || 'none'); // none, pending, connected
+    // Explicitly treat 'rejected' as 'none' so the user can try connecting again
+    const initialStatus = (user.connectionStatus === 'rejected') ? 'none' : (user.connectionStatus || 'none');
+    const [status, setStatus] = useState(initialStatus);
     const [loading, setLoading] = useState(false);
 
     const handleConnect = async (e) => {

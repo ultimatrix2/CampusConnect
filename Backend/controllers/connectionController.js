@@ -15,7 +15,7 @@ exports.sendRequest = async (req, res) => {
         console.log(`Connection Request: Sender ${senderId} to Receiver ${receiverId}`);
 
         // Check if request already exists
-        const existingRequest = await ConnectionRequest.findOne({
+        let existingRequest = await ConnectionRequest.findOne({
             $or: [
                 { sender: senderId, receiver: receiverId },
                 { sender: receiverId, receiver: senderId }
@@ -24,29 +24,49 @@ exports.sendRequest = async (req, res) => {
 
         if (existingRequest) {
             console.log("Existing request found:", existingRequest);
+
+            // Case 1: Already accepted
+            if (existingRequest.status === "accepted") {
+                return res.status(400).json({ success: false, message: "You are already connected." });
+            }
+
+            // Case 2: Pending request
             if (existingRequest.status === "pending") {
-                // Check if notification exists, if not create one (Retry logic)
+                // Check if it's a resend (maybe user clicked twice or wants to nudge)
+                // For now, we'll just say "Request already sent". 
+                // Alternatively, we could resend the notification if enough time has passed.
+                return res.status(200).json({ success: true, message: "Request already pending." });
+            }
+
+            // Case 3: Rejected request - Allow resending
+            if (existingRequest.status === "rejected") {
+                console.log("Resending rejected request:", existingRequest._id);
+                // If I am the original sender, I can try again.
+                // If I was the receiver (and I rejected them), and now I want to connect, 
+                // we should probably flip the sender/receiver or just reset.
+                // For simplicity: Update status to pending, update sender/receiver to current flow.
+
+                existingRequest.sender = senderId;
+                existingRequest.receiver = receiverId;
+                existingRequest.status = "pending";
+                await existingRequest.save();
+
+                // Create Notification for Receiver
                 const senderUser = await User.findById(senderId);
-
-                // Try to find if we already notified them recently to avoid spam? 
-                // For now, just send it. It fixes the "user didn't get notification" bug.
-
                 await Notification.create({
                     recipient: receiverId,
                     sender: senderId,
                     type: "connection_request",
-                    message: `You have a connection request from ${senderUser.name}`,
+                    message: `You have a new connection request from ${senderUser.name}`,
                     relatedId: existingRequest._id,
                     onModel: "ConnectionRequest"
                 });
 
-                return res.status(200).json({ success: true, message: "Request resent!" });
-            }
-            if (existingRequest.status === "accepted") {
-                return res.status(400).json({ success: false, message: "You are already connected." });
+                return res.status(200).json({ success: true, message: "Connection request sent again!" });
             }
         }
 
+        // Case 4: New Request
         const newRequest = new ConnectionRequest({
             sender: senderId,
             receiver: receiverId,
@@ -58,7 +78,7 @@ exports.sendRequest = async (req, res) => {
 
         // Create Notification for Receiver
         const senderUser = await User.findById(senderId);
-        const notif = await Notification.create({
+        await Notification.create({
             recipient: receiverId,
             sender: senderId,
             type: "connection_request",
@@ -66,7 +86,6 @@ exports.sendRequest = async (req, res) => {
             relatedId: savedRequest._id,
             onModel: "ConnectionRequest"
         });
-        console.log("Notification created:", notif._id);
 
         res.status(201).json({ success: true, message: "Connection request sent!" });
 
@@ -174,6 +193,17 @@ exports.rejectRequest = async (req, res) => {
 
         request.status = "rejected";
         await request.save();
+
+        // Notify Sender about rejection
+        const receiverUser = await User.findById(userId);
+        await Notification.create({
+            recipient: request.sender,
+            sender: userId,
+            type: "info", // Using 'info' type for simplicity, or could add 'alert'
+            message: `${receiverUser.name} rejected your connection request.`,
+            relatedId: request._id,
+            onModel: "ConnectionRequest"
+        });
 
         res.status(200).json({ success: true, message: "Connection rejected." });
 
