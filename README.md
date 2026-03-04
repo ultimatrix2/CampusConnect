@@ -363,6 +363,10 @@ Create a `.env` file in the `Backend/` directory with the following variables:
 
   ![Community](assets/images/community.png)
 
+* **Profile Matching**
+
+  ![Profile matching](assets/images/profilematch.png)
+
 * **Chat**
 
   ![Chat](assets/images/chat.png)
