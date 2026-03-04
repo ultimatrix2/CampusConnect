@@ -3,19 +3,19 @@ import Editor from "@monaco-editor/react";
 import socket from "../../socket";
 import { Play, Loader2, Terminal, X } from "lucide-react";
 
-// Language mappings for Piston API
+// Language mappings for Wandbox API (Alternative to Piston)
 const LANGUAGES = [
-    { value: "javascript", label: "JavaScript", piston: "javascript", version: "18.15.0" },
-    { value: "typescript", label: "TypeScript", piston: "typescript", version: "5.0.3" },
-    { value: "python", label: "Python", piston: "python", version: "3.10.0" },
-    { value: "java", label: "Java", piston: "java", version: "15.0.2" },
-    { value: "cpp", label: "C++", piston: "c++", version: "10.2.0" },
-    { value: "c", label: "C", piston: "c", version: "10.2.0" },
-    { value: "go", label: "Go", piston: "go", version: "1.16.2" },
-    { value: "rust", label: "Rust", piston: "rust", version: "1.68.2" },
+    { value: "javascript", label: "JavaScript", compiler: "nodejs-20.17.0" },
+    { value: "typescript", label: "TypeScript", compiler: "typescript-5.6.2" },
+    { value: "python", label: "Python", compiler: "cpython-3.12.7" },
+    { value: "java", label: "Java", compiler: "openjdk-jdk-22+36" },
+    { value: "cpp", label: "C++", compiler: "gcc-head" },
+    { value: "c", label: "C", compiler: "gcc-head-c" },
+    { value: "go", label: "Go", compiler: "go-1.23.2" },
+    { value: "rust", label: "Rust", compiler: "rust-1.82.0" },
 ];
 
-const PISTON_API = "https://emkc.org/api/v2/piston/execute";
+const WANDBOX_API = "https://wandbox.org/api/compile.json";
 
 const CodeEditor = ({ roomId, userId, initialCode, initialLanguage }) => {
     const [code, setCode] = useState(initialCode || "// Start coding here...\n");
@@ -70,7 +70,7 @@ const CodeEditor = ({ roomId, userId, initialCode, initialLanguage }) => {
     const runCode = async () => {
         const langConfig = LANGUAGES.find((l) => l.value === language);
 
-        if (!langConfig || !langConfig.piston) {
+        if (!langConfig || !langConfig.compiler) {
             setOutput("⚠️ Code execution not supported for this language.");
             setShowOutput(true);
             return;
@@ -81,44 +81,27 @@ const CodeEditor = ({ roomId, userId, initialCode, initialLanguage }) => {
         setOutput("Running code...");
 
         try {
-            const response = await fetch(PISTON_API, {
+            const response = await fetch(WANDBOX_API, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    language: langConfig.piston,
-                    version: langConfig.version,
-                    files: [
-                        {
-                            name: `main.${langConfig.value === "cpp" ? "cpp" : langConfig.value === "python" ? "py" : langConfig.value}`,
-                            content: code,
-                        },
-                    ],
+                    compiler: langConfig.compiler,
+                    code: code,
                     stdin: stdin,
                 }),
             });
 
             const result = await response.json();
 
-            if (result.run) {
-                const { stdout, stderr, code: exitCode } = result.run;
-                let outputText = "";
-
-                if (stdout) {
-                    outputText += stdout;
-                }
-                if (stderr) {
-                    outputText += (outputText ? "\n" : "") + "⚠️ Errors:\n" + stderr;
-                }
-                if (!stdout && !stderr) {
-                    outputText = "(No output)";
-                }
-
-                outputText += `\n\n✓ Exit code: ${exitCode}`;
+            if (result.status === "0") {
+                let outputText = result.program_message || result.program_output || "(No output)";
+                outputText += `\n\n✓ Exit code: 0`;
                 setOutput(outputText);
-            } else if (result.message) {
-                setOutput(`❌ Error: ${result.message}`);
+            } else if (result.status !== undefined) {
+                let errorText = result.compiler_error || result.program_error || result.compiler_message || "Execution failed";
+                setOutput(`❌ Error:\n${errorText}\n\nExit code: ${result.status}`);
             } else {
                 setOutput("❌ Failed to execute code");
             }

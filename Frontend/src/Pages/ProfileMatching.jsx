@@ -59,8 +59,7 @@ const ProfileMatching = () => {
 
     return (
         <DashboardLayout
-            title="Profile Matching"
-            subtitle="Connect with peers who complement your skills and goals."
+            title="Matched Profiles :"
             headerContent={
                 <div className="flex items-center gap-3 w-full max-w-md ml-4">
                     <div className="relative flex-1">

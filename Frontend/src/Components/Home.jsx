@@ -102,7 +102,6 @@ export default function Home() {
     <DashboardLayout
       headerContent={headerContent}
       title={`${selectedPlatform === "codeforces" ? " Codeforces" : " LeetCode"} Leaderboard`}
-      subtitle="Track and compare coding performance across your campus"
     >
       {/* Leaderboard */}
       <div className="rounded-xl border border-slate-700/50 bg-slate-900/80 overflow-hidden shadow-2xl">
