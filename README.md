@@ -1,8 +1,33 @@
 <a href="https://weekendofcode.computercodingclub.in/"> <img src="https://i.postimg.cc/njCM24kx/woc.jpg" height=30px> </a>
-
+<div align="center">
+   
 # CampusConnect
 
 CampusConnect is a full-stack college networking platform designed to bridge the gap between freshers and seniors. It fosters mentorship, collaboration, and real-time communication within the college community. The app integrates competitive coding platform data (Codeforces & LeetCode), offers a profile-matching algorithm for mentor–mentee pairing, provides a real-time chat system, a community post feed, and a collaborative code editor.
+
+</div>
+
+---
+
+<div align="center">
+
+![React](https://img.shields.io/badge/React-000000?style=for-the-badge&logo=react&logoColor=61DAFB) 
+![Redux Toolkit](https://img.shields.io/badge/Redux%20Toolkit-311B92?style=for-the-badge&logo=redux&logoColor=white) 
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-004D40?style=for-the-badge&logo=tailwindcss&logoColor=38BDF8) 
+![Socket.io Client](https://img.shields.io/badge/Socket.io%20Client-212121?style=for-the-badge&logo=socketdotio&logoColor=white) 
+![Axios](https://img.shields.io/badge/Axios-311B92?style=for-the-badge&logo=axios&logoColor=white) 
+![Monaco Editor](https://img.shields.io/badge/Monaco%20Editor-1E1E1E?style=for-the-badge&logo=visualstudiocode&logoColor=007ACC) 
+![Chart.js](https://img.shields.io/badge/Chart.js-B71C1C?style=for-the-badge&logo=chartdotjs&logoColor=white) 
+![Calendar Heatmap](https://img.shields.io/badge/Heatmap-212121?style=for-the-badge&logo=github&logoColor=yellow) 
+![Node.js](https://img.shields.io/badge/Node.js-1B5E20?style=for-the-badge&logo=node.js&logoColor=white) 
+![Express.js](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white) 
+![MongoDB](https://img.shields.io/badge/MongoDB-1B5E20?style=for-the-badge&logo=mongodb&logoColor=white) 
+![bcrypt](https://img.shields.io/badge/bcrypt-1A237E?style=for-the-badge) 
+![Google OAuth](https://img.shields.io/badge/Google%20OAuth-B71C1C?style=for-the-badge&logo=google&logoColor=white) 
+![Cloudinary](https://img.shields.io/badge/Cloudinary-311B92?style=for-the-badge&logo=cloudinary&logoColor=white) 
+![Nodemon](https://img.shields.io/badge/Nodemon-1B5E20?style=for-the-badge&logo=nodemon&logoColor=white)
+
+</div>
 
 ---
 
@@ -326,17 +351,25 @@ Create a `.env` file in the `Backend/` directory with the following variables:
 
 ## Screenshots
 
-* **Coding Portfolio**
+* **Profile**
 
-  ![profile](https://github.com/user-attachments/assets/efd428c0-29b9-41de-9d7d-0a8fb9ec67ae)
+  ![Profile](assets/images/profile.png)
 
-* **Dashboard**
+* **LeaderBoard**
 
-  ![home](https://github.com/user-attachments/assets/d5d9df33-a731-4d0b-a9dd-49c5f528e560)
+  ![LeaderBoard](assets/images/LeaderBoard.png)
+
+* **Community**
+
+  ![Community](assets/images/community.png)
 
 * **Chat**
 
-  ![chat](https://github.com/user-attachments/assets/742830c1-5c22-49ae-a674-35dba5d6cacf)
+  ![Chat](assets/images/chat.png)
+
+* **Code Arena**
+
+  ![Code Arena](assets/images/codearena.png)
 
 ---
 
