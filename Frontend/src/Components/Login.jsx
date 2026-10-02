@@ -77,59 +77,39 @@ function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    console.log("🔥 handleLogin triggered with loginData:", loginData);
 
     try {
       // ----------------- STEP 1: Send login request -----------------
-      console.log("🔹 Sending login request...");
       const response = await fetch("http://localhost:5001/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(loginData),
       });
 
-      console.log("🔹 Login response status:", response.status);
       const data = await response.json();
-      console.log("🔹 Login response body:", data);
 
       if (response.ok) {
-        console.log("✅ Login successful");
-
         // ----------------- STEP 2: Save token -----------------
         localStorage.setItem("token", data.token);
-        console.log("🔹 Token saved to localStorage");
 
-        // ----------------- STEP 3: Fetch full logged user info -----------------
-        try {
-          console.log("🔹 Fetching full logged user info...");
-          const userData = await getLoggedUser(); // safe API call
-          console.log("🔹 getLoggedUser returned:", userData);
+        // ----------------- STEP 3: Determine logged user -----------------
+        let loggedUser = data.user;
+        if (!loggedUser) {
+          const userData = await getLoggedUser();
+          loggedUser = userData?.user;
+        }
 
-          // ----------------- STEP 4: Dispatch Redux safely -----------------
-          if (userData?.user) {
-            dispatch(loginSuccess(userData.user)); // ✅ only dispatch real user
-          }
-
-          dispatch(
-            setUser({
-              user: userData?.user || null,
-              errorMessage: userData?.errorMessage || null,
-            })
-          );
-          console.log("🔹 Redux setUser dispatched successfully");
-        } catch (err) {
-          console.error("❌ Error fetching logged user:", err);
-
-          dispatch(
-            setUser({
-              user: null,
-              errorMessage: err.message || "Failed to fetch user",
-            })
-          );
+        // ----------------- STEP 4: Dispatch Redux & Navigate -----------------
+        if (loggedUser) {
+          dispatch(loginSuccess(loggedUser));
+          dispatch(setUser({ user: loggedUser, errorMessage: null }));
+          toast.success("Login successful!");
+          navigate("/home");
+        } else {
+          toast.error("Failed to load user profile");
         }
       } else {
-        console.warn("⚠️ Login failed, dispatching error to Redux");
-
+        toast.error(data.message || "Login failed");
         dispatch(
           setUser({
             user: null,
@@ -139,7 +119,7 @@ function Login() {
       }
     } catch (error) {
       console.error("❌ handleLogin catch error:", error);
-
+      toast.error(error.message || "Something went wrong");
       dispatch(
         setUser({
           user: null,
@@ -148,6 +128,7 @@ function Login() {
       );
     }
   };
+
 
 
   /* ================= GOOGLE AUTH ================= */

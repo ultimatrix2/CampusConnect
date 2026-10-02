@@ -56,7 +56,18 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = await User.findOne({ email });
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password are required" });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+    // allow login with either personal email or college gemail (case-insensitive)
+    const user = await User.findOne({
+      $or: [
+        { email: { $regex: new RegExp(`^${normalizedEmail}$`, "i") } },
+        { gemail: { $regex: new RegExp(`^${normalizedEmail}$`, "i") } },
+      ],
+    });
 
     if (!user) return res.status(400).json({ message: "Register first" });
 
@@ -64,8 +75,12 @@ exports.login = async (req, res) => {
     if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 
     const token = generateToken(user);
-    res.status(200).json({ message: "Login successful", token });
+    const userObj = user.toObject();
+    delete userObj.password;
+
+    res.status(200).json({ message: "Login successful", token, user: userObj });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+

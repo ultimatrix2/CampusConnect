@@ -20,7 +20,7 @@ exports.getLoggedUser = async (req, res) => {
   }
 };
 
-/* ===================== GET ALL USERS ===================== */
+/* ===================== get all users ===================== */
 exports.getAllUsers = async (req, res) => {
   try {
     console.log("Fetching all users...");
@@ -50,7 +50,7 @@ exports.getMe = async (req, res) => {
   }
 };
 
-/* ===================== UPDATE CODEFORCES ===================== */
+/* ===================== update codeforces ===================== */
 
 exports.updateProfile = async (req, res) => {
   try {
@@ -59,19 +59,19 @@ exports.updateProfile = async (req, res) => {
       return res.status(404).json({ success: false, message: "User not found" });
     }
 
-    // ===== SAFE YEAR HANDLING =====
+    // safe year handling 
     if ("year" in req.body) {
       const parsedYear = Number(req.body.year);
       user.year = Number.isFinite(parsedYear) ? parsedYear : null;
     }
 
-    // ===== SKILLS =====
+    //  skills 
     const skills =
       typeof req.body.skills === "string"
         ? req.body.skills.split(",").filter(Boolean)
         : req.body.skills || [];
 
-    // ===== FILES =====
+    //  files
     let profileImageUrl = user.profileImage;
     if (req.files?.profileImage) {
       profileImageUrl = req.files.profileImage[0].path;
@@ -82,13 +82,13 @@ exports.updateProfile = async (req, res) => {
       resumeUrl = req.files.resume[0].path;
     }
 
-    // ===== BASIC INFO =====
+    //  basic info 
     user.name = req.body.name || user.name;
     user.branch = req.body.branch || null;
     user.college = req.body.college || null;
     user.skills = skills;
 
-    // ===== LINKS =====
+    //  links
     user.github = req.body.githubLink || user.github;
     user.linkedin = req.body.linkedinLink || user.linkedin;
     user.leetcodeUsername = req.body.leetcodeLink || user.leetcodeUsername;
@@ -117,7 +117,7 @@ exports.updateProfile = async (req, res) => {
 
 
 
-/* ===================== LEETCODE GRAPHQL HELPER ===================== */
+/* ===================== leetcode graphql helper ===================== */
 const getLeetcodeGraphqlResponse = async (query, variables) => {
   return axios.post(
     "https://leetcode.com/graphql/",
@@ -131,7 +131,7 @@ const getLeetcodeGraphqlResponse = async (query, variables) => {
   );
 };
 
-/* ===================== UPDATE LEETCODE ===================== */
+/* ===================== update leetcode ===================== */
 exports.updateLeetcode = async (req, res) => {
   try {
     const { leetcodeUsername } = req.body;
