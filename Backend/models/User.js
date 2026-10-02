@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
   gemail: {
     type: String,
     unique: true,
-    sparse: true, // ⭐ IMPORTANT
+    sparse: true, //  IMPORTANT
     validate: {
       validator: function (email) {
         if (!email) return true; // allow null
@@ -47,12 +47,13 @@ const userSchema = new mongoose.Schema({
   },
 
   /* ================= SOCIAL LINKS ================= */
+
   github: { type: String, default: null },
   linkedin: { type: String, default: null },
   // (Optional)
   codeforcesUsername: {
     type: String,
-
+    unique: true,
     sparse: true
   },
 
@@ -63,7 +64,7 @@ const userSchema = new mongoose.Schema({
   // LeetCode Info
   leetcodeUsername: {
     type: String,
-
+    unique: true,
     sparse: true
   },
   leetcodeRating: {

@@ -1,7 +1,9 @@
 import { axiosInstance } from '.';
 
+// not used anymore since axiosInstance has the base url baked in
 const url = "http://localhost:5001";
 
+// get all chats for the logged-in user
 export const getAllChats = async() => {
     try{
         const response = await axiosInstance.get(`/api/chat/get-all-chats`);
@@ -12,6 +14,7 @@ export const getAllChats = async() => {
     }
 }
 
+// create a new chat between two members
 export const createNewChat = async(members) => {
     try{
         const response = await axiosInstance.post(`api/chat/create-new-chat`, { members });

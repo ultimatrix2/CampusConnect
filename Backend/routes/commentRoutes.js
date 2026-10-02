@@ -13,7 +13,7 @@ const authMiddleware = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-/* ================= COMMENTS ================= */
+//  COMMENTS  
 
 // Create comment on a post
 router.post("/:postId", authMiddleware, createComment);
@@ -22,13 +22,13 @@ router.post("/:postId", authMiddleware, createComment);
 router.get("/:postId", getCommentsByPost);
 
 // Edit comment
-router.put("/edit/:commentId",  authMiddleware, updateComment);
+router.put("/edit/:commentId", authMiddleware, updateComment);
 
 
 // Delete comment
 router.delete("/delete/:commentId", authMiddleware, deleteComment);
 
-/* ================= REPLIES ================= */
+//  REPLIES 
 
 // Add reply to a comment
 router.post("/:commentId/reply", authMiddleware, addReply);

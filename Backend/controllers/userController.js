@@ -107,7 +107,7 @@ exports.updateProfile = async (req, res) => {
       data: user,
     });
   } catch (error) {
-    console.error("❌ UPDATE PROFILE ERROR:", error.message);
+    console.error(" UPDATE PROFILE ERROR:", error.message);
     return res.status(500).json({
       success: false,
       message: error.message,
