@@ -10,7 +10,7 @@ exports.createPost = async (req, res) => {
     const { content, isAnonymous } = req.body;
 
 
-    // ❌ Block empty post FIRST
+    //  Block empty post FIRST
     if (!content && !req.file) {
       return res.status(400).json({
         success: false,
@@ -18,7 +18,7 @@ exports.createPost = async (req, res) => {
       });
     }
 
-    // 🔥 BAD WORD FILTER (Local)
+    // BAD WORD FILTER (Local)
     const badWords = ["abuse", "kill", "murder", "hate", "stupid", "idiot", "die", "death", "racist", "terrorist"]; // Add more as needed
     if (content) {
       const lowerContent = content.toLowerCase();
@@ -35,7 +35,7 @@ exports.createPost = async (req, res) => {
 
     let media = null;
 
-    // ✅ Handle file upload
+    //  Handle file upload
     if (req.file) {
       let folder = "community/files";
       let mediaType = "file";
@@ -47,12 +47,12 @@ exports.createPost = async (req, res) => {
         folder = "community/videos";
         mediaType = "video";
       } else {
-        folder = "community/docs";  // ⭐ use docs, not files
+        folder = "community/docs";  //  use docs, not files
         mediaType = "file";
       }
 
       const result = await uploadToCloudinary(req.file, folder);
-      console.log("☁️ Cloudinary result:", result);
+      console.log(" Cloudinary result:", result);
 
       media = {
         type: mediaType,
@@ -62,20 +62,20 @@ exports.createPost = async (req, res) => {
     }
 
 
-    // 🏷️ Extract Tags
+    //  Extract Tags
     const tags = content ? (content.match(/#[a-zA-Z0-9_]+/g) || []).map(tag => tag.toLowerCase()) : [];
 
     const post = await Post.create({
       content: content?.trim() || "",
       media,
-      tags, // ✅ Save indexed tags
+      tags, //  Save indexed tags
       postedBy: req.user._id,
       isAnonymous: isAnonymous === "true" || isAnonymous === true
     });
 
     const fullPost = await Post.findById(post._id).populate("postedBy", "name profileImage");
 
-    // ⚡ Real-time Update
+    //  Real-time Update
     getIO().emit("new-post", fullPost);
     res.status(201).json({ success: true, post: fullPost });
   } catch (error) {
@@ -108,9 +108,9 @@ exports.getAllPosts = async (req, res) => {
         likesCount: post.likes.length,
         repliesCount: post.repliesCount,
         createdAt: post.createdAt,
-        isMine: post.postedBy?._id.toString() === req.user._id.toString(), // ✅ Check ownership
+        isMine: post.postedBy?._id.toString() === req.user._id.toString(), //  Check ownership
 
-        // 🔒 Hide identity if anonymous
+        //  Hide identity if anonymous
         postedBy: post.isAnonymous
           ? { name: "Anonymous", profileImage: null }
           : post.postedBy
@@ -158,7 +158,7 @@ exports.deletePost = async (req, res) => {
       });
     }
 
-    // 🔐 OWNER CHECK
+    //  OWNER CHECK
     if (post.postedBy.toString() !== userId.toString()) {
       return res.status(403).json({
         success: false,
@@ -175,7 +175,7 @@ exports.deletePost = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("❌ Delete Post Error:", error);
+    console.error(" Delete Post Error:", error);
     return res.status(500).json({
       success: false,
       message: "Internal server error"
@@ -200,12 +200,12 @@ exports.toggleLikePost = async (req, res) => {
     const isLiked = post.likes.includes(userId);
 
     if (isLiked) {
-      // 👎 DISLIKE (REMOVE LIKE)
+      //  DISLIKE (REMOVE LIKE)
       post.likes = post.likes.filter(
         (id) => id.toString() !== userId.toString()
       );
     } else {
-      // 👍 LIKE
+      //  LIKE
       post.likes.push(userId);
     }
 
@@ -219,7 +219,7 @@ exports.toggleLikePost = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("❌ Toggle Like Error:", error);
+    console.error(" Toggle Like Error:", error);
     res.status(500).json({
       success: false,
       message: "Internal server error"
@@ -228,7 +228,7 @@ exports.toggleLikePost = async (req, res) => {
 };
 
 
-// 📈 Get Trending Tags (Scalable Aggregation)
+//  Get Trending Tags (Scalable Aggregation)
 exports.getTrendingTags = async (req, res) => {
   try {
     const tags = await Post.aggregate([

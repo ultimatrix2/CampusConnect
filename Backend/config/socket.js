@@ -41,6 +41,8 @@ const initSocket = (server) => {
     socket.on("join-post", (postId) => {
       socket.join(postId);
     });
+    // posts are treated exactly like chats.Anyone currently viewing that post joins the same room. 
+    // Future comments or likes can then be broadcast only to people viewing that post.
 
     /* ===== CODE LAB - Room Management ===== */
     socket.on("join-code-room", ({ roomId, user }) => {
