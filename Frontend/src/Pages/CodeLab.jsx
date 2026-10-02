@@ -12,7 +12,7 @@ import Whiteboard from "../Components/CodeLab/Whiteboard";
 import RoomDialog from "../Components/CodeLab/RoomDialog";
 import { DashboardLayout } from "../Components/DashboardLayout";
 import socket from "../socket";
-import { Code, Users, LogOut, Copy, Check } from "lucide-react";
+import { Code, LogOut, Copy, Check } from "lucide-react";
 import "./CodeLab.css";
 
 const CodeLab = () => {
@@ -107,24 +107,16 @@ const CodeLab = () => {
                             </p>
                             <div className="features-grid">
                                 <div className="feature-card">
-
                                     <h3>Code Editor</h3>
-                                    <p>Real-time synchronized editing with Monaco</p>
                                 </div>
                                 <div className="feature-card">
-
                                     <h3>Video Call</h3>
-                                    <p>Face-to-face communication via WebRTC</p>
                                 </div>
                                 <div className="feature-card">
-
                                     <h3>Session Chat</h3>
-                                    <p>Quick messaging alongside your code</p>
                                 </div>
                                 <div className="feature-card">
-
                                     <h3>Whiteboard</h3>
-                                    <p>Sketch ideas and explain concepts</p>
                                 </div>
                             </div>
                             <RoomDialog user={user} onRoomJoin={handleRoomJoin} />
@@ -141,14 +133,6 @@ const CodeLab = () => {
                                     <span>Code: {room.roomId}</span>
                                     {copied ? <Check size={14} /> : <Copy size={14} />}
                                 </div>
-                            </div>
-                            <div className="room-participants">
-                                <Users size={18} />
-                                <span>
-                                    {peerUser
-                                        ? `You & ${peerUser.username}`
-                                        : "Waiting for partner..."}
-                                </span>
                             </div>
                             <button className="leave-btn" onClick={leaveRoom}>
                                 <LogOut size={18} />
