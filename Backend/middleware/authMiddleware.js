@@ -3,9 +3,9 @@ const jwt = require("jsonwebtoken");
 module.exports = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
-     console.log("Auth Header:", authHeader);
+    console.log("Auth Header:", authHeader);
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      
+
       return res.status(401).json({
         success: false,
         message: "Authorization token missing or invalid",
@@ -14,16 +14,16 @@ module.exports = async (req, res, next) => {
 
     const token = authHeader.split(" ")[1];
 
-    // 🔥 FIX: variable name consistent rakho
+    //  FIX: variable name consistent rakho
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
 
-  
-   
-    // 🔥 IMPORTANT: req.user structure
+
+
+    //   req.user structure
     req.user = {
       _id: decodedToken.id || decodedToken._id || decodedToken.userId,
     };
-  
+
     next();
   } catch (error) {
     console.log(error);

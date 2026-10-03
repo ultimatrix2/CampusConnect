@@ -18,7 +18,8 @@ exports.createPost = async (req, res) => {
       });
     }
 
-    // BAD WORD FILTER (Local)
+    // bad word filter 
+
     const badWords = ["abuse", "kill", "murder", "hate", "stupid", "idiot", "die", "death", "racist", "terrorist"]; // Add more as needed
     if (content) {
       const lowerContent = content.toLowerCase();
@@ -200,12 +201,12 @@ exports.toggleLikePost = async (req, res) => {
     const isLiked = post.likes.includes(userId);
 
     if (isLiked) {
-      //  DISLIKE (REMOVE LIKE)
+      //  dislike & remove like
       post.likes = post.likes.filter(
         (id) => id.toString() !== userId.toString()
       );
     } else {
-      //  LIKE
+      // like 
       post.likes.push(userId);
     }
 
@@ -228,18 +229,18 @@ exports.toggleLikePost = async (req, res) => {
 };
 
 
-//  Get Trending Tags (Scalable Aggregation)
+//  get trending tags
 exports.getTrendingTags = async (req, res) => {
   try {
     const tags = await Post.aggregate([
-      { $unwind: "$tags" }, // Deconstruct tags array
+      { $unwind: "$tags" }, //  deconstruct tags array
       {
         $group: {
           _id: "$tags",
-          count: { $sum: 1 }
+          count: { $sum: 1 } //  count
         }
       },
-      { $sort: { count: -1 } }, // Sort by most frequent
+      { $sort: { count: -1 } }, //  sort frequent
       { $limit: 10 } // Top 10
     ]);
 

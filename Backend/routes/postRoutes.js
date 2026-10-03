@@ -15,7 +15,7 @@ router.get("/", authMiddleware, getAllPosts);
 router.delete("/delete/:postId", authMiddleware, deletePost);
 router.post("/like/:postId", authMiddleware, toggleLikePost);
 
-// 🆕 New Features
+//  New Features
 router.get("/trending", authMiddleware, getTrendingTags);
 router.post("/link-preview", authMiddleware, getLinkPreview);
 

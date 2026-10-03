@@ -4,7 +4,7 @@ const userController = require("./../controllers/userController");
 const upload = require("../config/multer");
 const User = require("../models/User");
 
-/* ===================== USER ROUTES ===================== */
+// USER ROUTES 
 router.get("/me", authMiddleware, userController.getMe);
 
 router.get(
@@ -36,8 +36,8 @@ router.put(
   ]),
 
   (req, res, next) => {
-    console.log("📦 [MULTER] req.body:", req.body);
-    console.log("📁 [MULTER] req.files:", req.files);
+    console.log(" [MULTER] req.body:", req.body);
+    console.log(" [MULTER] req.files:", req.files);
     next();
   },
   userController.updateProfile
@@ -63,8 +63,8 @@ router.post(
   leetcodeController.getLeetcodeData
 );
 
-// Deprecated or removed routes
-// router.post("/leetcode2", ...);
+
+// user count
 
 router.get(
   "/count",

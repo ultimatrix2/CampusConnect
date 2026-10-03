@@ -50,7 +50,7 @@ exports.getCodeforcesData = async (req, res) => {
         /* ================= 3. SUBMISSIONS (HEATMAP DATA) ================= */
         let submissions = [];
         try {
-            // Limit to recent 1000 to avoid heavy payload if user has many
+            // limit to recent 1000 only to avoid heavy payload 
             const statusRes = await axios.get(
                 `https://codeforces.com/api/user.status?handle=${username}&from=1&count=1000`
             );
@@ -66,10 +66,7 @@ exports.getCodeforcesData = async (req, res) => {
         submissions.forEach(sub => {
             const date = new Date(sub.creationTimeSeconds * 1000);
             const dateKey = Math.floor(date.getTime() / 1000); // Unix timestamp
-            // For compatibility with LC heatmap which uses unix timestamps of the start of the day?? 
-            // actually LC uses unix timestamps. Let's precise it to day level if needed by frontend
-            // But for now, let's just send the raw timestamp or day-based key?
-            // LC sends: {"1648425600": 3, "1648512000": 1 ...} (timestamps at 00:00 UTC)
+
 
             const dayStart = new Date(date).setHours(0, 0, 0, 0) / 1000;
             submissionCalendar[dayStart] = (submissionCalendar[dayStart] || 0) + 1;
@@ -82,10 +79,9 @@ exports.getCodeforcesData = async (req, res) => {
             const htmlRes = await axios.get(profileLink);
             const dom = new JSDOM(htmlRes.data);
             const document = dom.window.document;
-            // This might be flaky if CF changes UI
+
             const streakText = document.querySelector(".heatmap div span")?.textContent || "";
-            // CF doesn't actually show streak easily on profile main page anymore? 
-            // Assuming existing logic was correct or we just default to 0
+
             streak = Number(streakText.replace(/\D/g, "")) || 0;
         } catch {
             // console.warn("Streak scraping failed");
@@ -103,9 +99,7 @@ exports.getCodeforcesData = async (req, res) => {
                 maxRating: cf.maxRating,
 
                 // Stats
-                totalSolved: submissions.length, // From the recent 1000 fetched? 
-                // If we want TRUE total, we might need to rely on scraping or pagination
-                // But for now, returning count of fetched accepted submissions
+                totalSolved: submissions.length,
 
                 // Contests
                 totalContests: ratingHistory.length,
@@ -125,7 +119,7 @@ exports.getCodeforcesData = async (req, res) => {
         });
 
     } catch (error) {
-        console.error("❌ Codeforces Controller Error:", error.message);
+        console.error(" Codeforces Controller Error:", error.message);
         return res.status(500).json({
             success: false,
             message: "Failed to fetch Codeforces data",

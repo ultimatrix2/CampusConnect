@@ -10,12 +10,12 @@ export const googleRegister = async (req, res) => {
   try {
     const { token } = req.body;
 
-    // 🔐 Safety check
+    // safety check
     if (!token) {
       return res.status(400).json({ message: "Google token missing" });
     }
 
-    // ✅ Verify Google token
+    // verify Google token
     const ticket = await client.verifyIdToken({
       idToken: token,
       audience: process.env.GOOGLE_CLIENT_ID,
@@ -28,10 +28,10 @@ export const googleRegister = async (req, res) => {
       return res.status(400).json({ message: "Email not found in Google account" });
     }
 
-    // 🔍 Check if user exists
+    // check if user exists
     let user = await User.findOne({ email });
 
-    // 🆕 Create user if new
+    // create user if new
     if (!user) {
       user = await User.create({
         name,
@@ -42,7 +42,7 @@ export const googleRegister = async (req, res) => {
       });
     }
 
-    // 🔑 Create JWT
+    // create JWT
     const jwtToken = jwt.sign(
       { id: user._id },
       process.env.JWT_SECRET,

@@ -26,7 +26,7 @@ app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 app.use(express.json());
 
 app.use((req, res, next) => {
-  console.log(`➡️ ${req.method} ${req.originalUrl}`);
+  console.log(` ${req.method} ${req.originalUrl}`);
   next();
 });
 
@@ -45,7 +45,7 @@ app.use("/api/code-session", require("./routes/codeSessionRoutes"));
 /* DB */
 mongoose
   .connect(process.env.MONGO_URL)
-  .then(() => console.log("✅ MongoDB connected"))
+  .then(() => console.log(" MongoDB connected"))
   .catch((err) => {
     console.error(err.message);
     process.exit(1);

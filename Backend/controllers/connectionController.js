@@ -25,33 +25,27 @@ exports.sendRequest = async (req, res) => {
         if (existingRequest) {
             console.log("Existing request found:", existingRequest);
 
-            // Case 1: Already accepted
+            // already accepted
             if (existingRequest.status === "accepted") {
                 return res.status(400).json({ success: false, message: "You are already connected." });
             }
 
-            // Case 2: Pending request
+            // pending request
             if (existingRequest.status === "pending") {
-                // Check if it's a resend (maybe user clicked twice or wants to nudge)
-                // For now, we'll just say "Request already sent". 
-                // Alternatively, we could resend the notification if enough time has passed.
                 return res.status(200).json({ success: true, message: "Request already pending." });
             }
 
-            // Case 3: Rejected request - Allow resending
+            // rejected request  ,now allow resending
             if (existingRequest.status === "rejected") {
                 console.log("Resending rejected request:", existingRequest._id);
-                // If I am the original sender, I can try again.
-                // If I was the receiver (and I rejected them), and now I want to connect, 
-                // we should probably flip the sender/receiver or just reset.
-                // For simplicity: Update status to pending, update sender/receiver to current flow.
+                // update status to pending 
 
                 existingRequest.sender = senderId;
                 existingRequest.receiver = receiverId;
                 existingRequest.status = "pending";
                 await existingRequest.save();
 
-                // Create Notification for Receiver
+                // create notification for receiver
                 const senderUser = await User.findById(senderId);
                 await Notification.create({
                     recipient: receiverId,
@@ -66,7 +60,7 @@ exports.sendRequest = async (req, res) => {
             }
         }
 
-        // Case 4: New Request
+        // new Request
         const newRequest = new ConnectionRequest({
             sender: senderId,
             receiver: receiverId,
@@ -76,7 +70,7 @@ exports.sendRequest = async (req, res) => {
         const savedRequest = await newRequest.save();
         console.log("Request saved:", savedRequest._id);
 
-        // Create Notification for Receiver
+        // create notification for receiver
         const senderUser = await User.findById(senderId);
         await Notification.create({
             recipient: receiverId,
@@ -95,7 +89,7 @@ exports.sendRequest = async (req, res) => {
     }
 };
 
-// Get pending requests (received by current user)
+// get pending requests (received by current user)
 exports.getPendingRequests = async (req, res) => {
     try {
         const userId = req.user._id;
@@ -113,7 +107,7 @@ exports.getPendingRequests = async (req, res) => {
     }
 };
 
-// Get requests sent by current user (to update UI status)
+// get requests sent by current user (to update ui status)
 exports.getSentRequests = async (req, res) => {
     try {
         const userId = req.user._id;
@@ -128,7 +122,7 @@ exports.getSentRequests = async (req, res) => {
     }
 };
 
-// Accept a connection request
+// accept a connection request
 exports.acceptRequest = async (req, res) => {
     try {
         const userId = req.user._id;
