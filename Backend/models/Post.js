@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const cloudinary = require("../config/cloudinary");
 
-// 🔥 REQUIRED: define this BEFORE middleware
+//  REQUIRED: define this BEFORE middleware
 async function cascadeDelete(post) {
   if (!post) return;
 
@@ -29,7 +29,7 @@ const postSchema = new mongoose.Schema(
 
     tags: {
       type: [String],
-      index: true // 📈 Scalable indexing
+      index: true //  Scalable indexing
     },
 
     linkPreview: {

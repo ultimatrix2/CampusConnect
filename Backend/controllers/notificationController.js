@@ -5,7 +5,7 @@ exports.getNotifications = async (req, res) => {
     try {
         const userId = req.user._id;
 
-        // Fetch last 7 notifications
+        //  last 7 notifications
         console.log(`Fetching notifications for: ${userId}`);
         const notifications = await Notification.find({ recipient: userId })
             .sort({ createdAt: -1 })
@@ -35,7 +35,7 @@ exports.markAsRead = async (req, res) => {
     }
 };
 
-// Mark all as read (optional utility)
+// Mark all as read (optional )
 exports.markAllAsRead = async (req, res) => {
     try {
         const userId = req.user._id;

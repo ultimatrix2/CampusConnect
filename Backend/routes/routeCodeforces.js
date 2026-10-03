@@ -10,8 +10,5 @@ router.post(
   getCodeforcesData
 );
 
-// Deprecated or removed routes
-// router.post("/getCodeforcesData2", ...);
-
 
 module.exports = router;

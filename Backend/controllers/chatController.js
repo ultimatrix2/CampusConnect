@@ -2,15 +2,11 @@ const Chat = require("../models/Chat");
 const { getIO } = require("../config/socket");
 const mongoose = require("mongoose");
 
-/* =========================
-   SEND MESSAGE (TEXT / EMOJI)
-   ========================= */
+// send message
 
 
+//   get all chats
 
-/* =========================
-   GET ALL CHATS (Filtered by clearedAt)
-   ========================= */
 exports.getAllChats = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -46,9 +42,8 @@ exports.getAllChats = async (req, res) => {
 };
 
 
-/* =========================
-   CREATE OR GET CHAT (Filtered)
-   ========================= */
+//create or get chat (filtered)
+
 exports.createNewChat = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -58,7 +53,7 @@ exports.createNewChat = async (req, res) => {
       return res.status(400).json({ message: "UserId required" });
     }
 
-    // 🔍 check if chat already exists
+    // check if chat already exists
     let chat = await Chat.findOne({
       members: { $all: [userId, otherUserId] },
     });
@@ -83,16 +78,15 @@ exports.createNewChat = async (req, res) => {
   }
 };
 
-/* =========================
-   SEND MESSAGE
-   ========================= */
+// send message 
+
 exports.sendMessage = async (req, res) => {
   try {
-    // Check if file upload (multer)
+    // check if file upload (multer)
     let fileUrl = null;
     let fileType = null;
 
-    // If using multer-storage-cloudinary, req.file.path is the URL
+    // req.file.path is the URL
     if (req.file) {
       fileUrl = req.file.path;
       fileType = req.file.mimetype;
@@ -144,9 +138,8 @@ exports.sendMessage = async (req, res) => {
   }
 };
 
-/* =========================
-   CLEAR CHAT
-   ========================= */
+// clear chat
+
 exports.clearChat = async (req, res) => {
   try {
     const { chatId } = req.body;
@@ -155,7 +148,7 @@ exports.clearChat = async (req, res) => {
     const chat = await Chat.findById(chatId);
     if (!chat) return res.status(404).json({ message: "Chat not found" });
 
-    // Set clearedAt for this user to NOW
+    // set cleared at for this user to now
     if (!chat.clearedAt) chat.clearedAt = new Map();
     chat.clearedAt.set(userId.toString(), new Date());
 
@@ -168,9 +161,8 @@ exports.clearChat = async (req, res) => {
 };
 
 
-/* =========================
-   EDIT MESSAGE
-   ========================= */
+// edit msg
+
 exports.editMessage = async (req, res) => {
   try {
     const { chatId, messageId, newText } = req.body;
@@ -185,7 +177,7 @@ exports.editMessage = async (req, res) => {
       }
     );
 
-    // 🔥 Emit socket event
+    // emit socket event
     getIO().to(chatId).emit("message-edited", {
       chatId,
       messageId,
@@ -201,9 +193,8 @@ exports.editMessage = async (req, res) => {
   }
 };
 
-/* =========================
-   DELETE MESSAGE
-   ========================= */
+// delete mesasge
+
 exports.deleteMessage = async (req, res) => {
   try {
     const { chatId, messageId } = req.body;
@@ -212,7 +203,7 @@ exports.deleteMessage = async (req, res) => {
       $pull: { messages: { _id: messageId } },
     });
 
-    // 🔥 Emit socket event
+    //  Emit socket event
     getIO().to(chatId).emit("message-deleted", {
       chatId,
       messageId,
@@ -227,9 +218,9 @@ exports.deleteMessage = async (req, res) => {
   }
 };
 
-/* =========================
-   MARK MESSAGES AS READ
-   ========================= */
+
+// mark messages read
+
 exports.markMessagesRead = async (req, res) => {
   try {
     const { chatId } = req.body;
@@ -239,9 +230,8 @@ exports.markMessagesRead = async (req, res) => {
       return res.status(400).json({ message: "Invalid chatId" });
     }
 
-    // Update messages in this chat where:
-    // 1. Sender is NOT me (others sent them)
-    // 2. Read is false
+    // Update messages 
+    //  someone else is sender  +  Not read yet
     await Chat.updateOne(
       { _id: chatId },
       {
@@ -252,7 +242,7 @@ exports.markMessagesRead = async (req, res) => {
       }
     );
 
-    // Emit socket event to notify sender(s) that messages were read
+    // Emit socket event to notify sender that messages were read
     getIO().to(chatId).emit("messages-read", {
       chatId,
       readBy: userId
@@ -265,9 +255,8 @@ exports.markMessagesRead = async (req, res) => {
   }
 };
 
-/* =========================
-   REMOVE CHAT
-   ========================= */
+// Remove chat 
+
 exports.removeChat = async (req, res) => {
   try {
     const { chatId } = req.body;

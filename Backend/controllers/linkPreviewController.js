@@ -6,13 +6,13 @@ exports.getLinkPreview = async (req, res) => {
         const { url } = req.body;
         if (!url) return res.status(400).json({ success: false, message: "URL is required" });
 
-        // 1. Fetch HTML
+        // fetch HTML
         const { data } = await axios.get(url, {
             headers: { "User-Agent": "Mozilla/5.0 (CampusConnectBot)" },
             timeout: 5000
         });
 
-        // 2. Parse Metadata
+        // parse metadata
         const $ = cheerio.load(data);
         const title = $('meta[property="og:title"]').attr('content') || $('title').text() || "";
         const description = $('meta[property="og:description"]').attr('content') || $('meta[name="description"]').attr('content') || "";
@@ -26,7 +26,7 @@ exports.getLinkPreview = async (req, res) => {
 
     } catch (error) {
         console.error("Link Preview Error:", error.message);
-        // Don't fail the UI, just return empty preview
+        // fail the UI,  return empty preview
         res.json({ success: false, preview: null });
     }
 };

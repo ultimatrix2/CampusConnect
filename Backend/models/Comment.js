@@ -2,28 +2,28 @@ import mongoose from "mongoose";
 
 const commentSchema = new mongoose.Schema(
   {
-    // 🔗 POST id
+    //  POST id
     postId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Post",
       required: true,
     },
 
-    // 👤 comment author
+    //  comment author
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
 
-    // 💬 comment text
+    //  comment text
     text: {
       type: String,
       required: true,
       trim: true,
     },
 
-    // ↩️ replies (nested)
+    //  replies (nested)
     replies: [
       {
         _id: {
@@ -48,7 +48,7 @@ const commentSchema = new mongoose.Schema(
       },
     ],
 
-    // 😀 reactions (emoji support)
+    //  reactions (emoji support)
     reactions: [
       {
         userId: {

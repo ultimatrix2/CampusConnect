@@ -1,7 +1,7 @@
 const axios = require("axios");
 const User = require("../../models/User");
 
-// Helper for LeetCode GraphQL requests
+// helper for leetcode graphql requests 
 const getLeetcodeGraphqlResponse = async (query, variables) => {
     return axios.post(
         "https://leetcode.com/graphql/",
@@ -10,7 +10,6 @@ const getLeetcodeGraphqlResponse = async (query, variables) => {
             headers: {
                 "Content-Type": "application/json",
                 Referer: "https://leetcode.com/",
-                // Sometimes User-Agent is needed to avoid blocks
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
             },
             timeout: 10000 // 10s timeout
@@ -20,8 +19,7 @@ const getLeetcodeGraphqlResponse = async (query, variables) => {
 
 exports.getLeetcodeData = async (req, res) => {
     try {
-        // 1. Determine User ID (Target User)
-        // If specific ID passed in body, use it. Otherwise use logged-in user.
+        //  determine user id (checking for user id in body or current user)
         const userId = req.body.id || req.user._id;
 
         const user = await User.findById(userId);
@@ -34,8 +32,7 @@ exports.getLeetcodeData = async (req, res) => {
 
         const username = user.leetcodeUsername;
 
-        // 2. Construct GraphQL Query
-        // We fetch everything in one go to minimize requests
+        //  construct graphql query
         const query = `
       query getUserProfile($username: String!, $year: Int) {
         matchedUser(username: $username) {
@@ -127,12 +124,12 @@ exports.getLeetcodeData = async (req, res) => {
             ? Math.max(...contestHistory.map(c => c.rating))
             : currentRating;
 
-        // Update DB with latest rating (cache it)
+        // Update DB with latest rating & cache it
         if (user.leetcodeRating !== currentRating) {
             await User.findByIdAndUpdate(userId, { leetcodeRating: currentRating });
         }
 
-        // Parse Heatmap (submissionCalendar is a JSON string)
+        // parse heatmap (submissionCalendar is a JSON string)
         let heatmapData = {};
         let totalActiveDays = matchedUser.userCalendar?.totalActiveDays || 0;
 
@@ -198,7 +195,7 @@ exports.getLeetcodeData = async (req, res) => {
         });
 
     } catch (error) {
-        console.error("❌ LeetCode Controller Error:", error.message);
+        console.error(" LeetCode Controller Error:", error.message);
         return res.status(500).json({
             success: false,
             message: "Failed to fetch LeetCode data",

@@ -43,7 +43,7 @@ router.post(
   authMiddleware,
   upload.single("file"),
   (req, res, next) => {
-    console.log("✅ /send-message route hit");
+    console.log(" /send-message route hit");
     next();
   },
   sendMessage

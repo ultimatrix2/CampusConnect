@@ -1,13 +1,14 @@
 const User = require("../models/User");
 
-// --- Helper Functions in Controller ---
 
-/**
- * Step 1 & 2: Calculate Cosine Similarity for Tags
- */
+
+//calculate cosine similarity for tags
+
 const calculateTagSimilarity = (userTags, mentorTags) => {
     if (!userTags || !mentorTags) return 0;
-    // Normalize to lower case for comparison
+
+    // normalize to lower case for comparison
+
     const uTags = userTags.map(t => t.toLowerCase());
     const mTags = mentorTags.map(t => t.toLowerCase());
 
@@ -28,23 +29,21 @@ const calculateTagSimilarity = (userTags, mentorTags) => {
 
 exports.findMatches = async (req, res) => {
     try {
-        const userId = req.user._id; // From authMiddleware
+        const userId = req.user._id; // from authmiddleware
 
-        // 1. Fetch Current User
+        // fetch current user
         const currentUser = await User.findById(userId);
         if (!currentUser) {
             return res.status(404).json({ success: false, message: "User not found" });
         }
 
-        // 2. Fetch Potential Mentors (Filtering out current user)
-        // Optimization: In a real app, query only those who MIGHT match (e.g. have better rating)
-        // to avoid fetching the whole DB.
-        // For now, fetch all other users but selecting only necessary fields.
+        // fetch potential mentors (not current user)
+
         const users = await User.find({ _id: { $ne: userId } })
             .select("name email profileImage skills leetcodeRating codeforcesRating branch");
 
-        // 2b. Fetch existing connection requests for this user
-        // We need to know if we already requested or are connected
+        // fetch existing connection requests for this user
+
         const ConnectionRequest = require("../models/ConnectionRequest");
         const myRequests = await ConnectionRequest.find({
             $or: [{ sender: userId }, { receiver: userId }]
@@ -53,12 +52,9 @@ exports.findMatches = async (req, res) => {
         const statusMap = new Map();
         myRequests.forEach(req => {
             const otherId = req.sender.toString() === userId.toString() ? req.receiver.toString() : req.sender.toString();
-            // If already connected/accepted, status is 'connected'
-            // If pending and I sent it, status is 'pending'
-            // If pending and they sent it, status is 'pending' (or 'received' if we want to distinguish)
-            // If rejected, we want to allow sending again, so we can map it to 'none' or 'rejected'.
-            // For UI simplicity:
-            // 'rejected' -> 'none' (so button says "Connect" again)
+
+            // connected | pending | if rejected -> agian connect active 
+
 
             if (req.status === 'rejected') {
                 statusMap.set(otherId, 'none');
@@ -67,9 +63,10 @@ exports.findMatches = async (req, res) => {
             }
         });
 
-        // 3. Run Matching Algorithm
+        //  matching Algorithm
         const matches = users.map(mentor => {
-            // Initial Data Prep
+
+            //  data preparation
             const userTags = currentUser.skills || [];
             const mentorTags = mentor.skills || [];
             const mentorCF = mentor.codeforcesRating || 0;
@@ -77,31 +74,31 @@ exports.findMatches = async (req, res) => {
             const userCF = currentUser.codeforcesRating || 0;
             const userLC = currentUser.leetcodeRating || 0;
 
-            // Step 2b: Weak Match Filter (Tag Similarity)
+            //  tag similarity
             const tagSimilarity = calculateTagSimilarity(userTags, mentorTags);
             if (tagSimilarity < 0.25) {
                 // Return null to allow concise filtering later
                 return null;
             }
 
-            // Step 3: Hard Filter (Rating Threshold: +100)
+            // rating threshold +100 
             const cfDiff = mentorCF - userCF;
             const lcDiff = mentorLC - userLC;
 
             if (cfDiff < 100 && lcDiff < 100) {
-                return null; // Reject
+                return null; // reject
             }
 
-            // Step 4: Supporting Scores
+            // supporting scores
             const maxGap = 500;
             const avgGap = (Math.max(0, cfDiff) + Math.max(0, lcDiff)) / 2;
             const ratingScore = Math.min(avgGap / maxGap, 1);
 
-            // Depth Score -> Overlap / user_tags
+            // depth score 
             const overlap = userTags.filter(t => mentorTags.some(mt => mt.toLowerCase() === t.toLowerCase())).length;
             const depthScore = userTags.length > 0 ? overlap / userTags.length : 0;
 
-            // Domain Match - Assuming 'branch' is a proxy for domain if explicit domain field missing
+            // domain match 
             const domainMatch = (currentUser.branch && mentor.branch && currentUser.branch === mentor.branch) ? 1 : 0;
 
             // Gap Penalty (if gap > 1000)
@@ -115,7 +112,7 @@ exports.findMatches = async (req, res) => {
                 (0.10 * domainMatch) +
                 (0.05 * gapTerm);
 
-            // Extra Strengths (Skills mentor has that user doesn't)
+            // extra strengths ( mentor )
             const extraSkills = mentorTags.filter(t => !userTags.some(ut => ut.toLowerCase() === t.toLowerCase()));
 
             return {
@@ -132,8 +129,8 @@ exports.findMatches = async (req, res) => {
                 connectionStatus: statusMap.get(mentor._id.toString()) || 'none'
             };
         })
-            .filter(m => m !== null) // Remove rejected matches
-            .sort((a, b) => b.score - a.score); // Step 6: Sort Descending
+            .filter(m => m !== null) // reject matches
+            .sort((a, b) => b.score - a.score); //  sort descending
 
         res.status(200).json({
             success: true,

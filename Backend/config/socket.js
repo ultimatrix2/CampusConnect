@@ -41,8 +41,7 @@ const initSocket = (server) => {
     socket.on("join-post", (postId) => {
       socket.join(postId);
     });
-    // posts are treated exactly like chats.Anyone currently viewing that post joins the same room. 
-    // Future comments or likes can then be broadcast only to people viewing that post.
+
 
     /* ===== CODE LAB - Room Management ===== */
     socket.on("join-code-room", ({ roomId, user }) => {
@@ -137,7 +136,7 @@ const initSocket = (server) => {
           io.to(roomId).emit("user-left", { socketId: socket.id, user });
         }
       });
-      console.log("❌ Socket disconnected:", socket.id);
+      console.log(" Socket disconnected:", socket.id);
     });
   });
 
