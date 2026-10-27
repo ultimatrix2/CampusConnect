@@ -20,6 +20,7 @@ import {
     SelectValue,
 } from "@/Components/ui/select";
 import { Upload, Github, Linkedin, Code2, User, GraduationCap, Sparkles } from "lucide-react";
+import { API_BASE_URL } from "../config";
 
 // Predefined tags
 const TAGS =
@@ -106,7 +107,7 @@ export function EditProfileDialog({ open, onOpenChange, profile, onProfileUpdate
                 fd.append("resume", resumeInput.files[0]);
             }
 
-            const res = await fetch("http://localhost:5001/api/users/update-profile", {
+            const res = await fetch(`${API_BASE_URL}/api/users/update-profile`, {
                 method: "PUT",
                 headers: { Authorization: `Bearer ${token}` },
                 body: fd,

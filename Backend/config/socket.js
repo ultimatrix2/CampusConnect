@@ -8,7 +8,10 @@ const roomUsers = new Map();
 const initSocket = (server) => {
   io = new Server(server, {
     cors: {
-      origin: "http://localhost:3000",
+      origin: (origin, callback) => {
+        // Allow all origins or reflect the request origin
+        callback(null, true);
+      },
       credentials: true,
     },
   });

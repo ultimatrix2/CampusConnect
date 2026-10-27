@@ -4,6 +4,7 @@ import MatchCard from '../Components/MatchCard';
 import { Search, Filter, Loader2, AlertCircle } from 'lucide-react';
 import { Input } from "@/Components/ui/input";
 import { Button } from "@/Components/ui/button";
+import { API_BASE_URL } from '../config';
 
 const ProfileMatching = () => {
     const [loading, setLoading] = useState(true);
@@ -18,7 +19,7 @@ const ProfileMatching = () => {
             const token = localStorage.getItem("token");
             if (!token) return;
 
-            const res = await fetch("http://localhost:5001/api/matches/find-matches", {
+            const res = await fetch(`${API_BASE_URL}/api/matches/find-matches`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             const data = await res.json();

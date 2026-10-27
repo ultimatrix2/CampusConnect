@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./Sidebar.css";
 import { Link } from "react-router-dom";
+import { API_BASE_URL } from "../config";
 
 const CodeforcesLeaderboard = ({ selectedCourse, selectedYear }) => {
   console.log("Selected Filters:", selectedCourse, selectedYear);
@@ -13,7 +14,7 @@ const CodeforcesLeaderboard = ({ selectedCourse, selectedYear }) => {
     const fetchRatings = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch("http://localhost:5001/api/users/get-all-users", {
+        const response = await fetch(`${API_BASE_URL}/api/users/get-all-users`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

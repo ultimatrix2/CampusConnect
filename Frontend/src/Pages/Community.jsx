@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 import axios from "axios";
+import { API_BASE_URL } from "../config";
 import { useNavigate } from "react-router-dom";
 import { DashboardLayout } from "../Components/DashboardLayout";
 import { FaHeart, FaComment, FaShare, FaSmile, FaImage, FaVideo, FaTrash, FaPaperclip, FaFilePdf, FaFileWord, FaFileExcel, FaReply, FaChevronDown, FaChevronUp, FaBold, FaItalic, FaList, FaCode } from "react-icons/fa";
@@ -162,7 +163,7 @@ const Community = () => {
       action: async () => {
         try {
           await axios.delete(
-            `http://localhost:5001/api/community/delete/${postId}`,
+            `${API_BASE_URL}/api/community/delete/${postId}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`
@@ -187,7 +188,7 @@ const Community = () => {
   const getTotalUsers = async () => {
     try {
       const res = await fetch(
-        "http://localhost:5001/api/users/count",
+        `${API_BASE_URL}/api/users/count`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -220,7 +221,7 @@ const Community = () => {
   const fetchComments = async (postId) => {
     try {
       const res = await axios.get(
-        `http://localhost:5001/api/comments/${postId}`,
+        `${API_BASE_URL}/api/comments/${postId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -241,7 +242,7 @@ const Community = () => {
 
     try {
       await axios.put(
-        `http://localhost:5001/api/comments/${commentId}/reply/${replyId}`,
+        `${API_BASE_URL}/api/comments/${commentId}/reply/${replyId}`,
         { text: editReplyText },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -262,7 +263,7 @@ const Community = () => {
       action: async () => {
         try {
           await axios.delete(
-            `http://localhost:5001/api/comments/${commentId}/reply/${replyId}`,
+            `${API_BASE_URL}/api/comments/${commentId}/reply/${replyId}`,
             { headers: { Authorization: `Bearer ${token}` } }
           );
 
@@ -283,7 +284,7 @@ const Community = () => {
       setCommentLoading(true);
 
       await axios.post(
-        `http://localhost:5001/api/comments/${postId}`,
+        `${API_BASE_URL}/api/comments/${postId}`,
         { text, parentId },
         {
           headers: {
@@ -316,7 +317,7 @@ const Community = () => {
       action: async () => {
         try {
           await axios.delete(
-            `http://localhost:5001/api/comments/delete/${commentId}`,
+            `${API_BASE_URL}/api/comments/delete/${commentId}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -350,7 +351,7 @@ const Community = () => {
       setEditLoading(true);
 
       const res = await axios.put(
-        `http://localhost:5001/api/comments/edit/${commentId}`,
+        `${API_BASE_URL}/api/comments/edit/${commentId}`,
         { text: editText },
         {
           headers: {
@@ -398,7 +399,7 @@ const Community = () => {
 
     try {
       const res = await axios.post(
-        "http://localhost:5001/api/community/create",
+        `${API_BASE_URL}/api/community/create`,
         formData,
         {
           headers: {
@@ -434,7 +435,7 @@ const Community = () => {
   const handleLike = async (postId) => {
     try {
       const res = await axios.post(
-        `http://localhost:5001/api/community/like/${postId}`,
+        `${API_BASE_URL}/api/community/like/${postId}`,
         {},
         {
           headers: {
@@ -492,7 +493,7 @@ const Community = () => {
       setLoadingPosts(true);
 
       const res = await axios.get(
-        "http://localhost:5001/api/community/",
+        `${API_BASE_URL}/api/community/`,
         {
           headers: {
             Authorization: `Bearer ${token}`
@@ -543,7 +544,7 @@ const Community = () => {
   const fetchTrendingTags = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:5001/api/community/trending", {
+      const res = await axios.get(`${API_BASE_URL}/api/community/trending`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.data.success) {
@@ -709,7 +710,7 @@ const Community = () => {
                         <div className="flex items-center gap-2">
                           {comments.userId?.profileImage ? (
                             <img
-                              src={`http://localhost:5001/${comment.profileImage}`}
+                              src={`${API_BASE_URL}/${comment.profileImage}`}
                               alt="profile"
                               className="w-8 h-8 rounded-full object-cover"
                             />

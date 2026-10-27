@@ -1,0 +1,31 @@
+# Notes and internal interview materials
+interview/
+
+# Environment files & secrets
+.env
+.env.*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+Backend/.env
+Frontend/.env
+
+# Dependencies
+node_modules/
+Backend/node_modules/
+Frontend/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS & Editor generated files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Production build outputs
+Frontend/build/
+build/
+dist/

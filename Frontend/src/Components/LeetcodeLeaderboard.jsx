@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./Sidebar.css";
 import { Link } from "react-router-dom";
+import { API_BASE_URL } from "../config";
 
 const LeetcodeLeaderboard = ({ selectedCourse, selectedYear }) => {
   const [users, setUsers] = useState([]);
@@ -14,7 +15,7 @@ const LeetcodeLeaderboard = ({ selectedCourse, selectedYear }) => {
         if (!token) throw new Error("Unauthorized");
 
         const response = await fetch(
-          "http://localhost:5001/api/users/get-all-users",
+          `${API_BASE_URL}/api/users/get-all-users`,
           {
             method: "GET",
             headers: {

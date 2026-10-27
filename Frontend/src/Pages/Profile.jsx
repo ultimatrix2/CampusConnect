@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { DashboardLayout } from "@/Components/DashboardLayout";
 import { EditProfileDialog } from "@/Components/EditProfileDialog";
 import { ProfileInfo } from "@/Components/ProfileInfo";
+import { API_BASE_URL } from "../config";
 
 export default function Profile() {
   const token = localStorage.getItem("token");
@@ -14,7 +15,7 @@ export default function Profile() {
   /* ================= FETCH PROFILE ================= */
   const fetchProfile = async () => {
     try {
-      const res = await fetch("http://localhost:5001/api/users/me", {
+      const res = await fetch(`${API_BASE_URL}/api/users/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -32,7 +33,7 @@ export default function Profile() {
     // LeetCode
     try {
       console.log("➡️ Fetching LeetCode...");
-      const lcRes = await fetch("http://localhost:5001/api/users/leetcode", {
+      const lcRes = await fetch(`${API_BASE_URL}/api/users/leetcode`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -50,7 +51,7 @@ export default function Profile() {
     // Codeforces
     try {
       console.log("➡️ Fetching Codeforces...");
-      const cfRes = await fetch("http://localhost:5001/api/codeforces/getCodeforcesData", {
+      const cfRes = await fetch(`${API_BASE_URL}/api/codeforces/getCodeforcesData`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

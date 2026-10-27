@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo, useRef } from "react";
 import { DashboardLayout } from "../Components/DashboardLayout";
 import socket from "../socket"; // socket.io-client file
+import { API_BASE_URL } from "../config";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Search, MoreVertical, Send, Check, Trash2, Edit2, X, MessageSquare, Users, Smile, Trash, Paperclip, CheckCheck, FileText, ExternalLink } from "lucide-react";
@@ -115,7 +116,7 @@ function Chat() {
 
   const fetchUsers = async () => {
     try {
-      const res = await fetch("http://localhost:5001/api/connections/accepted", {
+      const res = await fetch(`${API_BASE_URL}/api/connections/accepted`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -133,7 +134,7 @@ function Chat() {
 
   const fetchMyChats = async () => {
     try {
-      const res = await fetch("http://localhost:5001/api/chat/get-all-chats", {
+      const res = await fetch(`${API_BASE_URL}/api/chat/get-all-chats`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -153,7 +154,7 @@ function Chat() {
      ========================= */
   const markChatRead = async (chatId) => {
     try {
-      await fetch("http://localhost:5001/api/chat/mark-read", {
+      await fetch(`${API_BASE_URL}/api/chat/mark-read`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -249,7 +250,7 @@ function Chat() {
 
     try {
       // Create new chat
-      const res = await fetch("http://localhost:5001/api/chat/create-new-chat", {
+      const res = await fetch(`${API_BASE_URL}/api/chat/create-new-chat`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -294,7 +295,7 @@ function Chat() {
     if ((!message.trim()) || !currentChat) return;
 
     try {
-      await fetch("http://localhost:5001/api/chat/send-message", {
+      await fetch(`${API_BASE_URL}/api/chat/send-message`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -331,7 +332,7 @@ function Chat() {
     formData.append("chatId", currentChat._id);
 
     try {
-      const res = await fetch("http://localhost:5001/api/chat/send-message", {
+      const res = await fetch(`${API_BASE_URL}/api/chat/send-message`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -358,7 +359,7 @@ function Chat() {
 
   const handleEditMessage = async (msgId) => {
     if (!editedText.trim()) return;
-    await fetch("http://localhost:5001/api/chat/edit-message", {
+    await fetch(`${API_BASE_URL}/api/chat/edit-message`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -380,7 +381,7 @@ function Chat() {
       title: "Delete Message",
       description: "Are you sure you want to delete this message? This action cannot be undone.",
       action: async () => {
-        await fetch("http://localhost:5001/api/chat/delete-message", {
+        await fetch(`${API_BASE_URL}/api/chat/delete-message`, {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
@@ -408,7 +409,7 @@ function Chat() {
       description: "Are you sure you want to clear the chat? This will remove all messages for you.",
       action: async () => {
         try {
-          const res = await fetch("http://localhost:5001/api/chat/clear-chat", {
+          const res = await fetch(`${API_BASE_URL}/api/chat/clear-chat`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -442,7 +443,7 @@ function Chat() {
       description: "Are you sure you want to delete this chat? It will be removed from your list.",
       action: async () => {
         try {
-          const res = await fetch("http://localhost:5001/api/chat/remove-chat", {
+          const res = await fetch(`${API_BASE_URL}/api/chat/remove-chat`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

@@ -12,6 +12,7 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Plus, LogIn, Copy, Check } from "lucide-react";
 import axios from "axios";
+import { API_BASE_URL } from "../../config";
 
 const RoomDialog = ({ user, onRoomJoin }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -34,7 +35,7 @@ const RoomDialog = ({ user, onRoomJoin }) => {
 
         try {
             const response = await axios.post(
-                "http://localhost:5001/api/code-session/create",
+                `${API_BASE_URL}/api/code-session/create`,
                 {
                     name: roomName,
                     hostId: user._id,
@@ -62,7 +63,7 @@ const RoomDialog = ({ user, onRoomJoin }) => {
 
         try {
             const response = await axios.post(
-                "http://localhost:5001/api/code-session/join",
+                `${API_BASE_URL}/api/code-session/join`,
                 {
                     roomId: roomCode,
                     userId: user._id,
