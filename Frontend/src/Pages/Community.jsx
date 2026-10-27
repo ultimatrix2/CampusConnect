@@ -21,13 +21,11 @@ import {
 } from "../Components/ui/alert-dialog";
 import { Skeleton } from "../Components/ui/skeleton";
 import { Input } from "../Components/ui/input";
-import { Button } from "../Components/ui/button";
-import { Search, Filter, Loader2, AlertCircle, RefreshCw } from 'lucide-react';
+import { Search, Filter, Loader2, RefreshCw } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { dracula } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import RatingBadge from '../Components/RatingBadge';
 
 
 
@@ -135,19 +133,17 @@ const Community = () => {
           ul: ({ node, ...props }) => <ul className="list-disc list-inside ml-4 space-y-1 text-gray-300" {...props} />,
           ol: ({ node, ...props }) => <ol className="list-decimal list-inside ml-4 space-y-1 text-gray-300" {...props} />,
           li: ({ node, ...props }) => <li className="pl-1" {...props} />,
-          a: ({ node, ...props }) => <a className="text-blue-400 hover:underline break-all" target="_blank" rel="noopener noreferrer" {...props} />,
-          blockquote: ({ node, ...props }) => <blockquote className="border-l-4 border-gray-500 pl-4 italic text-gray-400 my-2" {...props} />,
-          h1: ({ node, ...props }) => <h1 className="text-2xl font-bold text-white mt-4 mb-2" {...props} />,
-          h2: ({ node, ...props }) => <h2 className="text-xl font-bold text-white mt-3 mb-2" {...props} />,
-          h3: ({ node, ...props }) => <h3 className="text-lg font-bold text-white mt-2 mb-1" {...props} />,
+          a: ({ node, children, ...props }) => <a className="text-blue-400 hover:underline break-all" target="_blank" rel="noopener noreferrer" {...props}>{children}</a>,
+          blockquote: ({ node, children, ...props }) => <blockquote className="border-l-4 border-gray-500 pl-4 italic text-gray-400 my-2" {...props}>{children}</blockquote>,
+          h1: ({ node, children, ...props }) => <h1 className="text-2xl font-bold text-white mt-4 mb-2" {...props}>{children}</h1>,
+          h2: ({ node, children, ...props }) => <h2 className="text-xl font-bold text-white mt-3 mb-2" {...props}>{children}</h2>,
+          h3: ({ node, children, ...props }) => <h3 className="text-lg font-bold text-white mt-2 mb-1" {...props}>{children}</h3>,
         }}
       />
     );
   };
 
-  const getTagCount = (tag) => {
-    return posts.filter(post => post.content && post.content.toLowerCase().includes(tag.toLowerCase())).length;
-  };
+
 
 
 
@@ -206,6 +202,7 @@ const Community = () => {
   useEffect(() => {
     fetchPosts();
     getTotalUsers();   // ✅ ADD THIS
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const handleCommentClick = (postId) => {
     if (activeCommentPostId === postId) {
@@ -539,6 +536,7 @@ const Community = () => {
       socket.off("connect");
       socket.off("disconnect");
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchTrendingTags = async () => {

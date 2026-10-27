@@ -70,6 +70,7 @@ export default function Profile() {
   useEffect(() => {
     fetchProfile();
     fetchCodingData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!profile) {
