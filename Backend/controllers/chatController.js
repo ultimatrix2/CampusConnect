@@ -1,4 +1,4 @@
-const Chat = require("../models/Chat");
+const Chat = require("../models/chat");
 const { getIO } = require("../config/socket");
 const mongoose = require("mongoose");
 
