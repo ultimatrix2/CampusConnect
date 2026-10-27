@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { DashboardLayout } from "@/Components/DashboardLayout";
 import { ProfileInfo } from "@/Components/ProfileInfo";
 import { Loader2 } from "lucide-react";
+import { API_BASE_URL } from "../config";
 
 function OtherProfile() {
   const { id } = useParams();
@@ -22,7 +23,7 @@ function OtherProfile() {
       setLoading(true);
       try {
         // 1. Fetch User Profile (using get-all-users approach as before)
-        const usersRes = await fetch("http://localhost:5001/api/users/get-all-users", {
+        const usersRes = await fetch(`${API_BASE_URL}/api/users/get-all-users`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         const usersData = await usersRes.json();
@@ -33,7 +34,7 @@ function OtherProfile() {
 
         // 2. Fetch LeetCode
         try {
-          const lcRes = await fetch("http://localhost:5001/api/users/leetcode", {
+          const lcRes = await fetch(`${API_BASE_URL}/api/users/leetcode`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -49,7 +50,7 @@ function OtherProfile() {
 
         // 3. Fetch Codeforces
         try {
-          const cfRes = await fetch("http://localhost:5001/api/codeforces/getCodeforcesData", {
+          const cfRes = await fetch(`${API_BASE_URL}/api/codeforces/getCodeforcesData`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

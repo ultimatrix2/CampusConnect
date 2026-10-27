@@ -22,7 +22,28 @@ const { initSocket } = require("./config/socket");
 const { startRatingUpdateJob } = require("./cron/updateRatings");
 
 /* MIDDLEWARE */
-app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+const allowedOrigins = [
+  "http://localhost:3000",
+  process.env.CLIENT_URL,
+].filter(Boolean);
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps, curl, or server-to-server)
+      if (!origin) return callback(null, true);
+      if (
+        allowedOrigins.indexOf(origin) !== -1 ||
+        process.env.CLIENT_URL === "*" ||
+        !process.env.CLIENT_URL
+      ) {
+        return callback(null, true);
+      }
+      return callback(null, true); // Allow origin in deployment
+    },
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 app.use((req, res, next) => {

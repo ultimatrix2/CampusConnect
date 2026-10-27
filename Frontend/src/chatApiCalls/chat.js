@@ -1,7 +1,7 @@
 import { axiosInstance } from '.';
+import { API_BASE_URL } from '../config';
 
-
-const url = "http://localhost:5001";
+const url = API_BASE_URL;
 
 // get all chats for the logged-in user
 export const getAllChats = async () => {

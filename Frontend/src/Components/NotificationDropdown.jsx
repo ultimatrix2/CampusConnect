@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Bell, Check, X } from "lucide-react";
 import { Button } from "@/Components/ui/button";
 import toast from 'react-hot-toast';
+import { API_BASE_URL } from '../config';
 
 const NotificationDropdown = () => {
     const [notifications, setNotifications] = useState([]);
@@ -13,7 +14,7 @@ const NotificationDropdown = () => {
 
     const fetchNotifications = async () => {
         try {
-            const res = await fetch("http://localhost:5001/api/notifications", {
+            const res = await fetch(`${API_BASE_URL}/api/notifications`, {
                 headers: { "Authorization": `Bearer ${token}` }
             });
             const data = await res.json();
@@ -43,7 +44,7 @@ const NotificationDropdown = () => {
 
     const handleMarkRead = async (id) => {
         try {
-            await fetch("http://localhost:5001/api/notifications/mark-read", {
+            await fetch(`${API_BASE_URL}/api/notifications/mark-read`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -62,7 +63,7 @@ const NotificationDropdown = () => {
     const handleAcceptRequest = async (e, notification) => {
         e.stopPropagation();
         try {
-            const res = await fetch("http://localhost:5001/api/connections/accept", {
+            const res = await fetch(`${API_BASE_URL}/api/connections/accept`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -86,7 +87,7 @@ const NotificationDropdown = () => {
     const handleRejectRequest = async (e, notification) => {
         e.stopPropagation();
         try {
-            const res = await fetch("http://localhost:5001/api/connections/reject", {
+            const res = await fetch(`${API_BASE_URL}/api/connections/reject`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { API_BASE_URL } from "../config";
 
 /* ------------------------- SAFE LOCAL STORAGE PARSING ------------------------- */
 let storedUser = null;
@@ -19,7 +20,7 @@ export const fetchAllUsers = createAsyncThunk(
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        "http://localhost:5001/api/user/get-all-users",
+        `${API_BASE_URL}/api/user/get-all-users`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

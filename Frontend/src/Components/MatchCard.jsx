@@ -4,6 +4,7 @@ import { Button } from "@/Components/ui/button";
 import { MessageSquare, UserPlus, TrendingUp, Code2, Check, Clock } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { API_BASE_URL } from '../config';
 
 const MatchCard = ({ user }) => {
     const navigate = useNavigate();
@@ -17,7 +18,7 @@ const MatchCard = ({ user }) => {
         setLoading(true);
         try {
             const token = localStorage.getItem("token");
-            const res = await fetch("http://localhost:5001/api/connections/send", {
+            const res = await fetch(`${API_BASE_URL}/api/connections/send`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
