@@ -349,6 +349,13 @@ Create a `.env` file in the `Backend/` directory with the following variables:
 
 ---
 
+## 🚀 Live Demo
+
+- **Frontend:** [CampusConnect](https://campusconnect-frontend-fawn.vercel.app/)
+- **Backend API:** [Render Backend](https://campusconnect-backend-q47v.onrender.com)
+
+---
+
 ## Screenshots
 
 * **Profile**
